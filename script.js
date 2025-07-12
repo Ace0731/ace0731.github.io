@@ -10,7 +10,8 @@ function initTheme() {
 
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
-    } else if (prefersDark) {
+    } else {
+        // Default to dark mode for new users
         document.documentElement.setAttribute('data-theme', 'dark');
     }
 
@@ -24,6 +25,9 @@ function toggleTheme() {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeIcon();
+
+    // Update navbar background immediately
+    updateNavbarBackground();
 
     // Add a subtle animation to the toggle button
     themeToggle.style.transform = 'scale(0.8)';
@@ -54,18 +58,38 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
     if (!localStorage.getItem('theme')) {
         document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
         updateThemeIcon();
+        updateNavbarBackground();
     }
 });
 
-navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
+navToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navMenu.classList.toggle('show');
+    navToggle.classList.toggle('active');
 });
 
 // Close mobile menu when clicking on a link
 document.querySelectorAll('.nav-link').forEach(link => {
     link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
+        navMenu.classList.remove('show');
+        navToggle.classList.remove('active');
     });
+});
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (navMenu.classList.contains('show') && !navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+        navMenu.classList.remove('show');
+        navToggle.classList.remove('active');
+    }
+});
+
+// Close mobile menu on window resize
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        navMenu.classList.remove('show');
+        navToggle.classList.remove('active');
+    }
 });
 
 // Smooth scrolling for navigation links
@@ -86,8 +110,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar background on scroll
-window.addEventListener('scroll', () => {
+// Function to update navbar background
+function updateNavbarBackground() {
     const navbar = document.querySelector('.navbar');
     const currentTheme = document.documentElement.getAttribute('data-theme');
 
@@ -106,7 +130,10 @@ window.addEventListener('scroll', () => {
         }
         navbar.style.boxShadow = 'none';
     }
-});
+}
+
+// Navbar background on scroll
+window.addEventListener('scroll', updateNavbarBackground);
 
 // Intersection Observer for animations
 const observerOptions = {
@@ -168,42 +195,124 @@ function animateStats() {
     });
 }
 
+// Create notification system
+function createNotification(message, type = 'success') {
+    // Remove existing notifications
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+
+    const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+    const color = type === 'success' ? 'var(--success-color)' : '#ef4444';
+
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="${icon}" style="color: ${color}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Show notification with animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 5000);
+
+    // Close button functionality
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.addEventListener('click', () => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    });
+}
+
+// Initialize EmailJS
+(function () {
+    emailjs.init("WbYEHPXh1a4ROtV4a");
+})();
+
 // Form handling
 const contactForm = document.getElementById('contact-form');
 contactForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    // Get form data
+    // Get form data for validation
     const formData = new FormData(this);
     const name = formData.get('name');
     const email = formData.get('email');
+    const phone = formData.get('phone');
     const subject = formData.get('subject');
     const message = formData.get('message');
 
-    // Simulate form submission
+    // Check honeypot field (if filled, it's likely a bot)
+    const honeyField = formData.get('_honey');
+    if (honeyField) {
+        createNotification('Invalid submission detected.', 'error');
+        return;
+    }
+
+    // Show loading state
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
 
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     submitBtn.disabled = true;
 
-    setTimeout(() => {
-        // Reset form
-        this.reset();
+    // Prepare email template parameters
+    const templateParams = {
+        from_name: name,
+        from_email: email,
+        from_phone: phone,
+        subject: subject,
+        message: message,
+        to_email: 'ak9305059300.001@gmail.com'
+    };
 
-        // Show success message
-        submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-        submitBtn.style.background = 'var(--success-color)';
+    // Send email using EmailJS
+    emailjs.send('service_xmzg2xl', 'template_58xmzw7', templateParams)
+        .then(function (response) {
+            // Success - reset form and show success message
+            contactForm.reset();
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+            submitBtn.style.background = 'var(--success-color)';
 
-        setTimeout(() => {
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                submitBtn.style.background = '';
+            }, 3000);
+
+            createNotification('Thank you for your message! I\'ll get back to you soon.', 'success');
+        }, function (error) {
+            // Error - show error message and reset button
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
-            submitBtn.style.background = '';
-        }, 3000);
-
-        // Show alert
-        alert('Thank you for your message! I\'ll get back to you soon.');
-    }, 2000);
+            createNotification('Sorry, there was an error sending your message. Please try again.', 'error');
+        });
 });
 
 // Active navigation link
@@ -305,7 +414,7 @@ document.querySelectorAll('.btn').forEach(button => {
     });
 });
 
-// Add CSS for ripple animation
+// Add CSS for ripple animation and notifications
 const style = document.createElement('style');
 style.textContent = `
     @keyframes ripple {
@@ -343,6 +452,78 @@ style.textContent = `
     /* Preserve other transitions */
     .btn, .project-card, .stat-item, .detail-card, .nav-link, .theme-toggle {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Notification System */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--background-light);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        max-width: 400px;
+        transform: translateX(100%);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    
+    .notification.show {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+    }
+    
+    .notification-content i {
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    
+    .notification-content span {
+        color: var(--text-color);
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    .notification-close {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+    
+    .notification-close:hover {
+        background: var(--border-color);
+        color: var(--text-color);
+    }
+    
+    .notification-close i {
+        font-size: 14px;
+    }
+    
+    /* Dark mode notification styles */
+    [data-theme="dark"] .notification {
+        background: rgba(31, 41, 55, 0.95);
+        border-color: rgba(75, 85, 99, 0.5);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 `;
 document.head.appendChild(style);

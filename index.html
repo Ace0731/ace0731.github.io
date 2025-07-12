@@ -4,37 +4,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#3B82F6">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Anand Kushwaha - Full Stack Developer</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 
 <body>
-  <!-- Navigation -->
-  <nav class="navbar">
+  <header class="navbar">
     <div class="nav-container">
       <div class="nav-logo">
         <span class="logo-text">AK</span>
       </div>
-      <div class="nav-menu" id="nav-menu">
+
+      <!-- Hamburger Menu -->
+      <div id="nav-toggle" class="nav-toggle">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav id="nav-menu" class="nav-menu">
         <a href="#home" class="nav-link">Home</a>
         <a href="#about" class="nav-link">About</a>
         <a href="#skills" class="nav-link">Skills</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#experience" class="nav-link">Experience</a>
         <a href="#contact" class="nav-link">Contact</a>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+        <button id="theme-toggle" class="theme-toggle">
           <i class="fas fa-moon"></i>
         </button>
-      </div>
-      <div class="nav-toggle" id="nav-toggle">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
+      </nav>
     </div>
-  </nav>
+  </header>
+
+
 
   <!-- Hero Section -->
   <section id="home" class="hero">
@@ -431,11 +442,18 @@
             <input type="email" id="email" name="email" placeholder="Your Email" required>
           </div>
           <div class="form-group">
+            <input type="tel" id="phone" name="phone" placeholder="Your Mobile Number" pattern="[0-9+\-\s()]*" required>
+          </div>
+          <div class="form-group">
             <input type="text" id="subject" name="subject" placeholder="Subject" required>
           </div>
           <div class="form-group">
             <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
           </div>
+
+          <!-- Honeypot field (hidden from users but bots will fill it) -->
+          <input type="text" name="_honey" style="display:none">
+
           <button type="submit" class="btn btn-primary">
             <i class="fas fa-paper-plane"></i>
             Send Message
