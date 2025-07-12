@@ -12,7 +12,10 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 
@@ -20,7 +23,7 @@
   <header class="navbar">
     <div class="nav-container">
       <div class="nav-logo">
-        <span class="logo-text">AK</span>
+        <span class="logo-text">Ace</span>
       </div>
 
       <!-- Hamburger Menu -->
@@ -107,11 +110,11 @@
           </p>
           <div class="about-stats">
             <div class="stat-item">
-              <div class="stat-number">15+</div>
+              <div class="stat-number">5+</div>
               <div class="stat-label">Projects Completed</div>
             </div>
             <div class="stat-item">
-              <div class="stat-number">2+</div>
+              <div class="stat-number">1+</div>
               <div class="stat-label">Years Experience</div>
             </div>
             <div class="stat-item">
@@ -124,7 +127,7 @@
           <div class="detail-card">
             <i class="fas fa-graduation-cap"></i>
             <h3>Education</h3>
-            <p>Bachelor of Computer Applications<br>SJ Mahavidyalaya (2022-2025)<br>CGPA: 7.87</p>
+            <p>Bachelor of Computer Applications<br>SJ Mahavidyalaya (2022-2025)<br>CGPA: 8.04</p>
           </div>
           <div class="detail-card">
             <i class="fas fa-map-marker-alt"></i>
@@ -404,37 +407,74 @@
       </div>
       <div class="contact-content">
         <div class="contact-info">
-          <h3>Let's talk about your project</h3>
+          <h3>Let's collaborate</h3>
           <p>
-            I'm always interested in new opportunities and challenges.
-            Whether you have a project in mind or just want to say hello,
-            feel free to reach out!
+            If you have a project in mind or are seeking a dedicated developer, I’d love to discuss how I can help.
+            Please feel free to send a message using the form — I’ll get back to you shortly.
           </p>
-          <div class="contact-details">
-            <div class="contact-item">
+          <h4>Beyond the Portfolio</h4>
+          <p>Explore my work, profiles, and platforms where I share my ideas, projects, and progress.</p>
+
+          <div class="social-links">
+
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/in/anand-kushwaha-11709334a/" class="social-link" target="_blank"
+              rel="noopener">
+              <i class="fab fa-linkedin" style="font-size: 2rem;"></i>
+            </a>
+
+            <!-- GitHub -->
+            <a href="https://github.com/Ace0731" class="social-link" target="_blank" rel="noopener">
+              <i class="fab fa-github" style="font-size: 2rem;"></i>
+            </a>
+
+            <!-- YouTube (for journaling content) -->
+            <!-- <a href="https://www.youtube.com/@yourchannel" class="social-link" target="_blank" rel="noopener">
+              <i class="fab fa-youtube"></i>
+            </a> -->
+
+            <!-- Medium or Dev.to (for blogs, if any) -->
+            <!-- <a href="https://medium.com/@yourusername" class="social-link" target="_blank" rel="noopener">
+              <i class="fab fa-medium"></i>
+            </a> -->
+
+            <!-- Twitter / X -->
+            <!-- <a href="https://twitter.com/yourhandle" class="social-link" target="_blank" rel="noopener">
+              <i class="fab fa-twitter"></i>
+            </a> -->
+
+            <!-- CodePen (for small frontend showcases) -->
+            <!-- <a href="https://codepen.io/yourusername" class="social-link" target="_blank" rel="noopener">
+              <i class="fab fa-codepen"></i>
+            </a> -->
+
+            <!-- LeetCode (for coding practice) -->
+            <!-- <a href="https://leetcode.com/yourusername" class="social-link" target="_blank" rel="noopener"> -->
+            <!-- <i class="fas fa-code"></i> or use a custom icon if no FA -->
+            <!-- </a> -->
+
+            <!-- HackerRank
+            <a href="https://www.hackerrank.com/profile/anandk0731" class="social-link" target="_blank" rel="noopener">
+              <i class="fab fa-hackerrank"></i>
+            </a> -->
+
+            <!-- Email
+            <a href="mailto:ak9305059300.001@gmail.com" class="social-link" target="_blank">
               <i class="fas fa-envelope"></i>
-              <div>
-                <h4>Email</h4>
-                <p>ak9305059300.001@gmail.com</p>
-              </div>
-            </div>
-            <div class="contact-item">
-              <i class="fas fa-phone"></i>
-              <div>
-                <h4>Phone</h4>
-                <p>(+91) 9305059300</p>
-              </div>
-            </div>
-            <div class="contact-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <div>
-                <h4>Location</h4>
-                <p>Kanpur Nagar, Uttar Pradesh, India</p>
-              </div>
-            </div>
+            </a> -->
+
+            <!-- Resume (PDF link or Google Drive) -->
+            <a href="https://drive.google.com/file/d/15QqtRtfw-HSf9KOTI3RHZJM-HC748kVY/view?usp=drive_link"
+              class="social-link" target="_blank" rel="noopener">
+              <i class="fas fa-file-alt" style="font-size:2rem;"></i>
+            </a>
+
           </div>
+
         </div>
+
         <form class="contact-form" id="contact-form">
+
           <div class="form-group">
             <input type="text" id="name" name="name" placeholder="Your Name" required>
           </div>
@@ -463,19 +503,16 @@
     </div>
   </section>
 
+
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-content">
-        <div class="footer-text">
+      <div class="footer-content" style=" justify-content: center;">
+        <div class="footer-text" style=" text-align: center;">
+          <p>Made with ❤️ by <strong>Ace</strong></p>
           <p>&copy; 2025 Anand Kushwaha. All rights reserved.</p>
         </div>
-        <div class="social-links">
-          <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
-          <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-          <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-          <a href="mailto:ak9305059300.001@gmail.com" class="social-link"><i class="fas fa-envelope"></i></a>
-        </div>
+
       </div>
     </div>
   </footer>
