@@ -563,3 +563,54 @@ const debouncedScrollHandler = debounce(() => {
 }, 10);
 
 window.addEventListener('scroll', debouncedScrollHandler);
+
+//modals controls
+
+function showPopup(event, modalId) {
+    event.preventDefault();
+    document.getElementById(modalId).style.display = 'block';
+}
+
+function closePopup(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+
+
+// timeline calculation
+function getTimelineLabelWithDuration(startYear, startMonth) {
+    const now = new Date();
+    const startDate = new Date(startYear, startMonth - 1);
+
+    // Calculate the difference in months and years
+    let years = now.getFullYear() - startDate.getFullYear();
+    let months = now.getMonth() - startDate.getMonth();
+
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    // Format the start date string
+    const startDateStr = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+    // Format the duration string
+    const yearsText = years > 0 ? years + (years === 1 ? " year" : " years") : "";
+    const monthsText = months > 0 ? months + (months === 1 ? " month" : " months") : "";
+
+    let durationText = "";
+    if (years > 0 && months > 0) {
+        durationText = `(${yearsText}, ${monthsText})`;
+    } else if (years > 0) {
+        durationText = `(${yearsText})`;
+    } else if (months > 0) {
+        durationText = `(${monthsText})`;
+    } else {
+        durationText = "(less than a month)";
+    }
+
+    return `${startDateStr} - Present ${durationText}`;
+}
+
+const timelineText = getTimelineLabelWithDuration(2025, 3); //Start Month,year
+document.querySelector('.timeline-date').textContent = timelineText;
