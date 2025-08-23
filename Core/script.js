@@ -164,16 +164,6 @@ document.querySelectorAll('section, .stat-item, .project-card, .detail-card, .sk
     observer.observe(el);
 });
 
-// Animate skill bars
-function animateSkillBars() {
-    const skillBars = document.querySelectorAll('.skill-progress');
-    skillBars.forEach((bar, index) => {
-        setTimeout(() => {
-            const width = bar.getAttribute('data-width');
-            bar.style.width = width;
-        }, index * 200);
-    });
-}
 
 // Animate stats counter
 function animateStats() {
@@ -250,70 +240,7 @@ function createNotification(message, type = 'success') {
     });
 }
 
-// Initialize EmailJS
-(function () {
-    emailjs.init("WbYEHPXh1a4ROtV4a");
-})();
 
-// Form handling
-const contactForm = document.getElementById('contact-form');
-contactForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    // Get form data for validation
-    const formData = new FormData(this);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const phone = formData.get('phone');
-    const subject = formData.get('subject');
-    const message = formData.get('message');
-
-    // Check honeypot field (if filled, it's likely a bot)
-    const honeyField = formData.get('_honey');
-    if (honeyField) {
-        createNotification('Invalid submission detected.', 'error');
-        return;
-    }
-
-    // Show loading state
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-    submitBtn.disabled = true;
-
-    // Prepare email template parameters
-    const templateParams = {
-        from_name: name,
-        from_email: email,
-        from_phone: phone,
-        subject: subject,
-        message: message,
-        to_email: 'ak9305059300.001@gmail.com'
-    };
-
-    // Send email using EmailJS
-    emailjs.send('service_xmzg2xl', 'template_58xmzw7', templateParams)
-        .then(function (response) {
-            // Success - reset form and show success message
-            contactForm.reset();
-            submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-            submitBtn.style.background = 'var(--success-color)';
-
-            setTimeout(() => {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                submitBtn.style.background = '';
-            }, 3000);
-
-            createNotification('Thank you for your message! I\'ll get back to you soon.', 'success');
-        }, function (error) {
-            // Error - show error message and reset button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            createNotification('Sorry, there was an error sending your message. Please try again.', 'error');
-        });
-});
 
 // Active navigation link
 window.addEventListener('scroll', () => {
