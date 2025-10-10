@@ -2,17 +2,20 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="google-site-verification" content="XUEwlumheCQDoqSSxv7vPTmZRYH2SxPP7fESiXVQrrs" />
-  <title>Anand Kushwaha - Portfolio</title>
-  <link rel="stylesheet" href="Core/styles.css">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+
+  <meta name="theme-color" content="#3B82F6">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Anand Kushwaha - Full Stack Developer</title>
+  <link rel="stylesheet" href="/Core/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
+  <link rel="manifest" href="/icons/site.webmanifest">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-JGDYQ1Y9YQ"></script>
   <script>
@@ -22,146 +25,536 @@
 
     gtag('config', 'G-JGDYQ1Y9YQ');
   </script>
-  <style>
-    /* Hero Section */
-    .hero-landing {
-      margin-top: 120px;
-      text-align: center;
-      padding: 60px 20px;
-    }
 
-    .hero-title {
-      font-size: 2.8rem;
-      font-weight: 700;
-      margin-bottom: 15px;
-      color: var(--text-primary);
-    }
-
-    .hero-subtitle {
-      font-size: 1.3rem;
-      margin-bottom: 40px;
-      color: var(--text-secondary);
-    }
-
-    /* Role Cards */
-    .role-options {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-    }
-
-    .role-card {
-      width: 320px;
-      padding: 40px 25px;
-      border-radius: 12px;
-      background: var(--card-background);
-      box-shadow: var(--shadow-md);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .role-card:hover {
-      transform: translateY(-8px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .role-icon {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      color: var(--primary-color);
-    }
-
-    .role-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .role-description {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
-    }
-
-    .btn-role {
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      background: var(--gradient-primary);
-      color: white;
-      transition: var(--transition-theme);
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-role:hover {
-      box-shadow: var(--shadow-md);
-      transform: translateY(-2px);
-    }
-  </style>
 </head>
+<style>
+  /* Skill bar container */
+  .skill-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  /* Skill progress */
+  .skill-progress {
+    width: 0;
+    /* Start from 0 for animation */
+    height: 100%;
+    background: linear-gradient(90deg, #10B981, #3B82F6);
+    /* Green → Blue */
+    border-radius: 4px;
+    transition: width 1s ease-in-out;
+    /* Smooth animation */
+  }
+
+  /* Optional styling for category */
+  .skills-category {
+    margin-bottom: 30px;
+  }
+
+  .category-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  .skill-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+</style>
 
 <body>
-  <!-- Navbar -->
   <header class="navbar">
     <div class="nav-container">
       <div class="nav-logo">
-        <span class="logo-text">Ace</span>
+        <a href="/index.html" class="logo-text">Ace</a>
       </div>
-      <nav class="nav-menu">
-        <a href="index.html" class="nav-link active">Home</a>
-        <a href="Pages/fullstack.html" class="nav-link">Full Stack</a>
-        <a href="Pages/dataanalyst.html" class="nav-link">Data Analyst</a>
+
+
+      <!-- Hamburger Menu -->
+      <div id="nav-toggle" class="nav-toggle">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav id="nav-menu" class="nav-menu" ">
+        <a href=" #home" class="nav-link">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#experience" class="nav-link">Experience</a>
         <a href="/Pages/Contact.html" class="nav-link">Contact</a>
-        <button id="theme-toggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button id="theme-toggle" class="theme-toggle">
+          <i class="fas fa-moon"></i>
+        </button>
       </nav>
     </div>
   </header>
 
-  <!-- Landing Section -->
-  <section class="hero-landing">
-    <h1 class="hero-title">Hi, I'm <span class="highlight">Anand Kushwaha</span></h1>
-    <p class="hero-subtitle">Explore my work as a Full Stack Developer and Data Analyst</p>
 
-    <div class="role-options">
-      <!-- Full Stack Card -->
-      <div class="role-card">
-        <i class="fas fa-laptop-code role-icon"></i>
-        <h2 class="role-title">Full Stack Developer</h2>
-        <p class="role-description">Building robust web and mobile applications with modern technologies from frontend
-          to backend.</p>
-        <a href="Pages/fullstack.html" class="btn-role">View Full Stack Work</a>
-      </div>
 
-      <!-- Data Analyst Card -->
-      <div class="role-card">
-        <i class="fas fa-chart-line role-icon"></i>
-        <h2 class="role-title">Data Analyst</h2>
-        <p class="role-description">Turning data into insightfull Dashboards using SQL, Python, Excel, Tableau & Power
-          BI for smarter
-          decisions.</p>
-        <a href="Pages/dataanalyst.html" class="btn-role">View Data Analyst Work</a>
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="hero-title">
+            Hi, I'm <span class="highlight">Anand Kushwaha</span>
+          </h1>
+          <h2 class="hero-subtitle">Full Stack Developer</h2>
+          <p class="hero-description">
+            Passionate about creating innovative web solutions and mobile applications.
+            Specialized in .NET technologies, Flutter, and modern web development.
+          </p>
+          <div class="hero-buttons">
+            <a href="#projects" class="btn btn-primary">View My Work</a>
+            <a href="/Pages/Contact.html" class="btn btn-secondary">Get In Touch</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="profile-card">
+            <div class="profile-avatar">
+              <img style="width: 300px; height: 300px; border-radius: 50%;" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/profile.jpg
+"></i>
+            </div>
+            <div class="floating-elements">
+              <div class="floating-element" style="--delay: 0s;">
+                <i class="fab fa-js-square"></i>
+              </div>
+              <div class="floating-element" style="--delay: 0.5s;">
+                <i class="fab fa-react"></i>
+              </div>
+              <div class="floating-element" style="--delay: 1s;">
+                <i class="fas fa-database"></i>
+              </div>
+              <div class="floating-element" style="--delay: 1.5s;">
+                <i class="fab fa-python"></i>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- About Section -->
+  <section id="about" class="about">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">About Me</h2>
+        <p class="section-subtitle">Get to know me better</p>
+      </div>
+      <div class="about-content">
+        <div class="about-text">
+          <p>
+            Enthusiastic and driven individual with a passion for learning, problem-solving,
+            and effective collaboration. I thrive in team-oriented settings and am dedicated
+            to personal and professional growth while making meaningful contributions to
+            organizational success.
+          </p>
+          <div class="about-stats">
+            <div class="stat-item">
+              <div class="stat-number">3+</div>
+              <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">1+</div>
+              <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">8+</div>
+              <div class="stat-label">Technologies</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-details">
+          <div class="detail-card">
+            <i class="fas fa-graduation-cap"></i>
+            <h3>Education</h3>
+            <p>Bachelor of Computer Applications<br>SJ Mahavidyalaya (2022-2025)<br>CGPA: 8.04</p>
+          </div>
+          <div class="detail-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>Location</h3>
+            <p>Kanpur Nagar<br>Uttar Pradesh, India</p>
+          </div>
+          <div class="detail-card">
+            <i class="fas fa-envelope"></i>
+            <h3>Contact</h3>
+            <p>ak9305059300.001@gmail.com<br>(+91) 9305059300</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="skills">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Skills & Expertise</h2>
+        <p class="section-subtitle">Technologies I work with</p>
+      </div>
+      <div class="skills-content">
+        <div class="skills-category">
+          <h3 class="category-title">Frontend Development</h3>
+          <div class="skill-items">
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">HTML5 & CSS3</span>
+                <span class="skill-percentage">90%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="90%"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">JavaScript</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="85%"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">ASP.NET MVC (Razor)</span>
+                <span class="skill-percentage">88%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="88%"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Flutter</span>
+                <span class="skill-percentage">85%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="85%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skills-category">
+          <h3 class="category-title">Backend Development</h3>
+          <div class="skill-items">
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">C# & .NET Framework</span>
+                <span class="skill-percentage">92%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="92%"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">Entity Framework</span>
+                <span class="skill-percentage">86%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="86%"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">RESTful APIs</span>
+                <span class="skill-percentage">88%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="88%"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="skill-info">
+                <span class="skill-name">MySQL</span>
+                <span class="skill-percentage">84%</span>
+              </div>
+              <div class="skill-bar">
+                <div class="skill-progress" data-width="84%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="soft-skills">
+          <h3 class="category-title">Soft Skills</h3>
+          <div class="soft-skill-tags">
+            <span class="skill-tag">Communication</span>
+            <span class="skill-tag">Problem Solving</span>
+            <span class="skill-tag">Team Collaboration</span>
+            <span class="skill-tag">Leadership</span>
+            <span class="skill-tag">Time Management</span>
+            <span class="skill-tag">Adaptability</span>
+            <span class="skill-tag">Attention to Detail</span>
+            <span class="skill-tag">Positive Thinking</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects" class="projects">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured Projects</h2>
+        <p class="section-subtitle">Some of my recent work</p>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-image">
+            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/InnoTend.webp
+" alt="InnoTend"></img>
+          </div>
+          <div class="project-content">
+            <h3 class="project-title">Innotend</h3>
+            <p class="project-description">
+              Cross-platform mobile app for employee attendance for 'Innovaneers Technologies' with Flutter frontend
+              and .NET Web API backend with automatic attendance marking.
+            </p>
+            <div class="project-tech">
+              <span class="tech-tag">Flutter</span>
+              <span class="tech-tag">Dart</span>
+              <span class="tech-tag">.NET Web API</span>
+              <span class="tech-tag">MySQL</span>
+            </div>
+            <div class="project-links">
+              <a href="#" class="project-link" onclick="showPopup(event, 'popupModalApp')">
+                <i class="fas fa-external-link-alt"></i> View Project
+              </a>
+              <a href="#" class="project-link">
+                <i class="fas fa-external-link-alt"></i>
+                Play Store
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-image">
+            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/KDO_Onboard.webp
+" alt="KDO_Onboard"></img>
+          </div>
+          <div class="project-content">
+            <h3 class="project-title">KDO Onboard App</h3>
+            <p class="project-description">
+              Staff onboarding mobile application for Kholo Dukan Online (Atomas Power Pvt Ltd),
+              built with Flutter for seamless onboarding workflows and real-time status tracking.
+            </p>
+            <div class="project-tech">
+              <span class="tech-tag">Flutter</span>
+              <span class="tech-tag">Dart</span>
+
+              <span class="tech-tag">.NET Web API</span>
+              <span class="tech-tag">MySQL</span>
+            </div>
+            <div class="project-links">
+              <a href="#" class="project-link" onclick="showPopup(event, 'popupModalApp')">
+                <i class="fas fa-external-link-alt"></i> View Project
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.innovaneers.atomassstaff&pcampaignid=web_share"
+                class="project-link">
+                <i class="fas fa-external-link-alt"></i>
+                Play Store
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image">
+            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Tutor_Connect.webp
+" alt="Tutor Connect Website"></img>
+          </div>
+          <div class="project-content">
+            <h3 class="project-title">Tutor Connect Website</h3>
+            <p class="project-description">
+              A web platform that connects local tutors with students, enabling easy discovery, scheduling, and
+              communication.
+              It features tutor profiles, subject-wise search, rating system, and secure bookings.
+            </p>
+            <div class="project-tech">
+              <span class="tech-tag">React.js</span>
+              <span class="tech-tag">Node.js</span>
+              <span class="tech-tag">Typescript</span>
+              <span class="tech-tag">Firebase</span>
+            </div>
+            <div class="project-links">
+              <a href="#" class="project-link" onclick="showPopup(event, 'popupModalWebsite')">
+                <i class="fas fa-external-link-alt"></i> View Project
+              </a>
+              <a href="https://thesahilsirstutorials.in/" target="_blank" class="project-link">
+                <i class="fas fa-external-link-alt"></i>
+                Live Website
+              </a>
+            </div>
+          </div>
+        </div>
+<div class="project-card">
+  <div class="project-image">
+    <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/amit_polyseats.png"
+      alt="Amit Polyseats Inventory Management System">
+  </div>
+
+  <div class="project-content">
+    <h3 class="project-title">Amit Polyseats Inventory Management System</h3>
+    <p class="project-description">
+      A custom-built inventory and production management web software designed for Amit Polyseats.
+      It manages item groups, production tracking, dispatch modules, and vendor onboarding.
+      Built with C# ASP.NET MVC, Entity Framework, MySQL, and Bootstrap, it streamlines
+      manufacturing operations and improves workflow efficiency.
+    </p>
+
+    <div class="project-tech">
+      <span class="tech-tag">C#</span>
+      <span class="tech-tag">ASP.NET MVC</span>
+      <span class="tech-tag">Entity Framework</span>
+      <span class="tech-tag">MySQL</span>
+      <span class="tech-tag">Bootstrap</span>
+    </div>
+
+    <div class="project-links">
+      <a href="#" class="project-link" onclick="showPopup(event, 'popupModalAmitPolyseats')">
+        <i class="fas fa-external-link-alt"></i> View Project
+      </a>
+      
+      <!-- No live link since internal software -->
+    </div>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Experience Section -->
+  <section id="experience" class="experience">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Work Experience</h2>
+        <p class="section-subtitle">My professional journey</p>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">March 2025 - Present</div>
+            <h3 class="timeline-title">Full Stack Developer</h3>
+            <h4 class="timeline-company">Innovaneers Technology, Kanpur</h4>
+            <ul class="timeline-description">
+              <li>Developed an attendance tracking application with real-time validation and reporting features</li>
+              <li>Built KDO Onboard, a staff onboarding application in Flutter integrated with secure .NET APIs</li>
+              <li>Created and optimized responsive business websites with SEO strategies to enhance visibility and
+                performance</li>
+              <li>Developed cross-platform mobile applications leveraging Flutter with integrated .NET APIs</li>
+              <li>Implemented scalable RESTful APIs and optimized database architecture using Entity Framework and MySQL
+              </li>
+            </ul>
+            <div class="timeline-tech">
+              <span class="tech-tag">ASP.NET MVC</span>
+              <span class="tech-tag">C#</span>
+              <span class="tech-tag">Flutter</span>
+              <span class="tech-tag">MySQL</span>
+              <span class="tech-tag">Entity Framework</span>
+              <span class="tech-tag">REST API</span>
+              <span class="tech-tag">SEO</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- Popup Modals -->
+  <!-- App Modal -->
+  <div id="popupModalApp" class="popup-modal">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('popupModalApp')">&times;</span>
+      <h3>Private Repository</h3>
+      <p>Live on the Play Store: The app is fully accessible for hands-on experience.</p>
+      <p>The source code is privately maintained due to client confidentiality.</p>
+    </div>
+  </div>
+
+  <!-- Website Modal -->
+  <div id="popupModalWebsite" class="popup-modal">
+    <div class="popup-content">
+      <span class="close-btn" onclick="closePopup('popupModalWebsite')">&times;</span>
+      <h3>Private Repository</h3>
+      <p>The project is live and fully accessible through its website for real-time use.</p>
+      <p>The source code is privately maintained due to client confidentiality.</p>
+    </div></div>
+
+    <!-- Amit Polyseats Modal -->
+    <div id="popupModalAmitPolyseats" class="popup-modal">
+      <div class="popup-content">
+        <span class="close-btn" onclick="closePopup('popupModalAmitPolyseats')">&times;</span>
+        <h3>Amit Polyseats Inventory Management System</h3>
+        <p>
+          This is a custom-built <strong>inventory and production management software</strong>
+          created for <strong>Amit Polyseats</strong> to streamline manufacturing workflows.
+        </p>
+        
+        <p>
+          <em>Note:</em> This is an internal enterprise solution. The source code and live access
+          are private due to client confidentiality.
+        </p>
+      </div>
+    </div>
+
+  
+
+
+
+
   <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-content" style="justify-content:center;">
-        <div class="footer-text" style="text-align:center;">
+      <div class="footer-content" style=" justify-content: center;">
+        <div class="footer-text" style=" text-align: center;">
           <p>Made with ❤️ by <strong>Ace</strong></p>
           <p>&copy; 2025 Anand Kushwaha. All rights reserved.</p>
         </div>
+
       </div>
     </div>
   </footer>
 
-  <script src="Core/script.js"></script>
+  <script src="/Core/script.js"></script>
 </body>
+<script>
+  // Animate skill bars
+  function animateSkillBars() {
+    const skillBars = document.querySelectorAll('.skill-progress');
+    skillBars.forEach((bar, index) => {
+      setTimeout(() => {
+        const width = bar.getAttribute('data-width');
+        bar.style.width = width;
+      }, index * 200);
+    });
+  }
+
+  // Run animation when DOM loads
+  document.addEventListener("DOMContentLoaded", () => {
+    animateSkillBars();
+  });
+</script>
 
 </html>
