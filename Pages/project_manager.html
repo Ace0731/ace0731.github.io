@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFET - Project Finance & Effort Tracker</title>
+    <title>PFET - Firestore Project Tracker</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Expose Firebase objects globally for use in the script below
+        window.firebase = {
+            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
+            getFirestore, doc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, setLogLevel
+        };
+    </script>
+
     <style>
         /* Custom scrollbar for dark mode */
         body::-webkit-scrollbar { width: 8px; }
-        body::-webkit-scrollbar-track { background: #1f2937; /* Darker track */ }
-        body::-webkit-scrollbar-thumb { background: #4b5563; /* Gray thumb */ }
+        body::-webkit-scrollbar-track { background: #1f2937; }
+        body::-webkit-scrollbar-thumb { background: #4b5563; }
         body::-webkit-scrollbar-thumb:hover { background: #6b7280; }
         /* Style for required fields */
         .required-label::after { content: ' *'; color: #ef4444; }
@@ -42,39 +55,42 @@
     <div class="max-w-7xl mx-auto">
         <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-800">
             <h1 class="text-3xl md:text-4xl font-extrabold text-white flex items-center">
-                <i data-lucide="layout-grid" class="w-7 h-7 mr-3 text-primary"></i>
-                PFET: Project Tracker
+                <i data-lucide="cloud" class="w-7 h-7 mr-3 text-primary"></i>
+                PFET: Firestore Project Tracker
             </h1>
-            <div class="flex space-space-x-3">
-                <!-- Import Button -->
-                <button id="import-data-btn" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-l-lg shadow-lg transition duration-200 flex items-center">
-                    <i data-lucide="upload" class="w-5 h-5 mr-1"></i>
-                    Import Data
-                </button>
-                <!-- Export Button (now triggers direct download) -->
-                <button id="export-data-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-r-lg shadow-lg transition duration-200 flex items-center">
-                    <i data-lucide="download" class="w-5 h-5 mr-1"></i>
-                    Export Backup
-                </button>
-                <button id="add-project-btn" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition duration-200 flex items-center ml-3">
-                    <i data-lucide="plus" class="w-5 h-5 mr-1"></i>
-                    New Project
-                </button>
-            </div>
+            <button id="add-project-btn" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition duration-200 flex items-center">
+                <i data-lucide="plus" class="w-5 h-5 mr-1"></i>
+                New Project
+            </button>
         </header>
 
         <!-- Notification Bar (Toast) -->
         <div id="message-box" class="fixed top-4 right-4 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 opacity-0 hidden z-50"></div>
 
-        <!-- NOTE: Data Storage Status -->
-        <div class="text-xs text-yellow-500 bg-yellow-900/20 p-2 rounded-lg mb-6">
-            <p>
-                ⚠️ **Data Storage Notice:** Data is saved locally in your browser. Use **Export Backup** to download a JSON file for safe keeping, and **Import Data** to restore from your file.
+        <!-- Persistence Status & User ID -->
+        <div class="text-xs bg-gray-800/50 p-3 rounded-lg mb-6 flex justify-between items-center">
+            <p class="text-gray-400">
+                <i data-lucide="database" class="w-4 h-4 inline mr-1 text-green-400"></i>
+                Data is saved persistently in Firestore.
+            </p>
+            <p class="text-gray-400">
+                <span class="font-semibold text-white">User ID:</span> 
+                <span id="user-id-display" class="font-mono text-gray-300">Loading...</span>
             </p>
         </div>
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center p-12 text-gray-500 flex flex-col items-center justify-center">
+            <svg class="animate-spin h-8 w-8 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-lg">Connecting to database and loading projects...</p>
+        </div>
+
 
         <!-- Dashboard Summary -->
-        <section id="dashboard-summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+        <section id="dashboard-summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10 hidden">
             <!-- Summary cards will be injected here -->
         </section>
 
@@ -177,7 +193,7 @@
             </form>
         </div>
     </div>
-
+    
     <!-- Delete Confirmation Modal (Custom Modal) -->
     <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center modal-overlay p-4">
         <div class="bg-card w-full max-w-sm rounded-xl shadow-2xl p-6">
@@ -197,44 +213,27 @@
         </div>
     </div>
     
-    <!-- IMPORT DATA MODAL (Remains for pasting data) -->
-    <div id="import-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center modal-overlay p-4">
-        <div class="bg-card w-full max-w-4xl rounded-xl shadow-2xl p-6 md:p-8 transform transition-all duration-300">
-            <h3 class="text-xl md:text-2xl font-bold text-white mb-4 border-b border-gray-800 pb-3 flex items-center">
-                <i data-lucide="upload-cloud" class="w-6 h-6 mr-2 text-primary"></i>
-                Import Project Data (JSON Restore)
-            </h3>
-            <p class="text-sm text-gray-400 mb-4">Paste the full content of your exported `.json` file below. **WARNING:** This will replace all current projects in your local storage!</p>
-            
-            <form id="import-form">
-                <textarea id="import-json-input" rows="15" required class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-4 text-white text-sm font-mono focus:ring-primary focus:border-primary resize-none" placeholder='Paste JSON array here, e.g., [{"id": "...", "name": "...", ...}, ...]'>
-                </textarea>
-                
-                <p id="import-status" class="text-red-400 text-sm mt-2 hidden">Invalid JSON format or empty data.</p>
-
-                <div class="flex justify-end space-x-3 mt-4">
-                    <button type="button" id="close-import-modal-btn" class="px-4 py-2 text-gray-400 hover:text-white rounded-lg transition duration-200">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-md flex items-center">
-                        <i data-lucide="check-circle" class="w-5 h-5 mr-1"></i>
-                        Confirm Import
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-
     <script>
-        // Global array to hold current project data
+        // Global state and constants
+        const HOURS_PER_DAY = 8;
+        let db;
+        let auth;
+        let userId = null;
         let projects = [];
-        const STORAGE_KEY = 'pfit_projects_v1';
+        let unsubscribe = null; // To hold the onSnapshot listener cleanup function
+
+        // Global environment variables (expected to be injected by the runtime)
+        // These are accessed via global variables provided by the canvas environment.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
         const projectListContainer = document.getElementById('project-list-container');
         const emptyState = document.getElementById('empty-state');
         const dashboardSummary = document.getElementById('dashboard-summary');
         const messageBox = document.getElementById('message-box');
+        const loadingState = document.getElementById('loading-state');
+        const userIdDisplay = document.getElementById('user-id-display');
 
         // --- Utility Functions ---
 
@@ -243,7 +242,6 @@
             messageBox.textContent = message;
             messageBox.className = `fixed top-4 right-4 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 z-50`;
             
-            // Set background color based on type
             if (type === 'green') {
                 messageBox.classList.add('bg-green-600');
             } else if (type === 'red') {
@@ -260,20 +258,19 @@
                 messageBox.classList.add('opacity-0');
                 setTimeout(() => {
                     messageBox.classList.add('hidden');
-                    messageBox.classList.remove('bg-green-600', 'bg-red-600', 'bg-gray-600'); // Clean up colors
+                    messageBox.classList.remove('bg-green-600', 'bg-red-600', 'bg-gray-600'); 
                 }, 300);
-            }, 3000); // Display for 3 seconds
-        };
-
-
-        /** Generates a unique ID (UUID style) for new projects. */
-        const generateId = () => {
-            return crypto.randomUUID();
+            }, 3000); 
         };
 
         /** Formats a number as currency (USD). */
-        const formatCurrency = (amount) => {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(amount);
+        const formatCurrency = (amount, decimals = 0) => {
+            return new Intl.NumberFormat('en-US', { 
+                style: 'currency', 
+                currency: 'USD', 
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals 
+            }).format(amount);
         };
 
         /** Calculates variance color and icon. */
@@ -283,33 +280,101 @@
             return { color: 'text-gray-400', icon: 'minus', text: `0 Days` };
         };
 
-        // --- Local Storage Functions ---
 
-        /** Loads projects from localStorage. */
-        const loadProjectsFromStorage = () => {
+        // --- Firestore Setup and Listener ---
+
+        const getProjectsCollectionRef = () => {
+            if (!db || !userId) {
+                console.error("Firestore DB or User ID not initialized. Cannot create collection reference.");
+                return null;
+            }
+            // Private data path: /artifacts/{appId}/users/{userId}/projects
+            const path = `artifacts/${appId}/users/${userId}/projects`;
+            return firebase.collection(db, path);
+        };
+
+        const setupRealtimeListener = () => {
+            // If a previous listener exists, stop it
+            if (unsubscribe) {
+                unsubscribe();
+            }
+
+            const collectionRef = getProjectsCollectionRef();
+            if (!collectionRef) return;
+            
+            // Query for projects (No orderBy to avoid index requirement issues)
+            const q = firebase.query(collectionRef);
+
+            // Start listening for real-time updates
+            unsubscribe = firebase.onSnapshot(q, (snapshot) => {
+                loadingState.classList.add('hidden');
+                dashboardSummary.classList.remove('hidden');
+
+                projects = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                renderProjects();
+            }, (error) => {
+                console.error("Firestore Snapshot Error:", error);
+                showCustomMessage(`Error fetching data: ${error.message}`, 'red');
+                loadingState.classList.add('hidden');
+            });
+        };
+        
+        /** Initializes Firebase App and sets up Auth State Listener */
+        const firebaseInit = () => {
+            if (Object.keys(firebaseConfig).length === 0) {
+                 console.error("Firebase config is empty. Cannot initialize.");
+                 showCustomMessage("Firebase configuration missing. Data will not persist.", 'red');
+                 loadingState.classList.add('hidden');
+                 return;
+            }
+
             try {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                projects = stored ? JSON.parse(stored) : [];
+                // Set Debug logs for better understanding
+                firebase.setLogLevel('Debug');
+                
+                const app = firebase.initializeApp(firebaseConfig);
+                db = firebase.getFirestore(app);
+                auth = firebase.getAuth(app);
+
+                // 1. Handle Authentication
+                firebase.onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdDisplay.textContent = userId;
+                        setupRealtimeListener();
+                    } else {
+                        // Attempt sign-in with custom token or anonymously
+                        try {
+                            if (initialAuthToken) {
+                                // Use the custom token provided by the environment
+                                await firebase.signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                // Fallback to anonymous sign-in
+                                const anonUser = await firebase.signInAnonymously(auth);
+                                userId = anonUser.user.uid;
+                                userIdDisplay.textContent = userId;
+                                setupRealtimeListener();
+                            }
+                        } catch (error) {
+                            console.error("Authentication Error:", error);
+                            showCustomMessage(`Auth failed: ${error.message}. Check console for details.`, 'red');
+                            userIdDisplay.textContent = 'Auth Failed';
+                            loadingState.classList.add('hidden');
+                        }
+                    }
+                });
+
             } catch (e) {
-                console.error("Error loading projects from localStorage:", e);
-                projects = [];
-                showCustomMessage("Error loading data from local storage. Starting fresh.", 'red');
+                console.error("Firebase Initialization Error:", e);
+                showCustomMessage(`Critical Error during setup: ${e.message}`, 'red');
             }
         };
 
-        /** Saves the current global projects array to localStorage. */
-        const saveProjectsToStorage = () => {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-                renderProjects(); // Re-render the UI after saving
-            } catch (e) {
-                console.error("Error saving projects to localStorage:", e);
-                showCustomMessage(`Error saving data: Storage full or unavailable.`, 'red');
-            }
-        };
-
-
-        // --- Project Data Functions (CRUD & Backup/Restore) ---
+        // --- Project Data Functions (CRUD) ---
 
         /** Opens the modal for adding or editing a project. */
         const openModal = (project = null) => {
@@ -341,53 +406,68 @@
                 document.getElementById('estimatedDays').value = 1;
             }
             modal.style.display = 'flex';
-            // Refresh lucide icons in the modal
             lucide.createIcons();
         };
 
-        /** Saves a new project or updates an existing one. */
-        const saveProject = (e) => {
+        /** Saves a new project or updates an existing one to Firestore. */
+        const saveProject = async (e) => {
             e.preventDefault();
-
             const projectId = document.getElementById('project-id').value;
             
-            // 1. Collect all project data fields into a single object
+            // 1. Collect and calculate
+            const myShareCost = parseFloat(document.getElementById('myShareCost').value || 0);
+            const estimatedDays = parseInt(document.getElementById('estimatedDays').value || 1);
+            
+            let earningPerDay = 0;
+            let earningPerHour = 0;
+            
+            if (estimatedDays > 0) {
+                earningPerDay = myShareCost / estimatedDays;
+                earningPerHour = earningPerDay / HOURS_PER_DAY;
+            }
+
             const projectData = {
                 name: document.getElementById('name').value,
                 type: document.getElementById('type').value,
                 status: document.getElementById('status').value,
                 techStack: document.getElementById('techStack').value,
                 
-                // Convert number inputs to actual numbers
                 totalProjectCost: parseFloat(document.getElementById('totalProjectCost').value || 0),
-                myShareCost: parseFloat(document.getElementById('myShareCost').value || 0),
+                myShareCost: myShareCost,
                 myPerDayCost: parseFloat(document.getElementById('myPerDayCost').value || 0),
-                estimatedDays: parseInt(document.getElementById('estimatedDays').value || 1),
+                estimatedDays: estimatedDays,
                 actualDays: parseInt(document.getElementById('actualDays').value || 0),
 
                 startDate: document.getElementById('startDate').value,
                 notes: document.getElementById('notes').value,
+                
+                earningPerDay: parseFloat(earningPerDay.toFixed(2)),
+                earningPerHour: parseFloat(earningPerHour.toFixed(2)),
+                updatedAt: firebase.serverTimestamp(),
             };
 
-            if (projectId) {
-                // Update existing project
-                const index = projects.findIndex(p => p.id === projectId);
-                if (index !== -1) {
-                    projects[index] = { ...projects[index], ...projectData, updatedAt: new Date().toISOString() };
+            const collectionRef = getProjectsCollectionRef();
+            if (!collectionRef) return;
+
+            try {
+                if (projectId) {
+                    // Update existing project
+                    const docRef = firebase.doc(collectionRef, projectId);
+                    await firebase.updateDoc(docRef, projectData);
                     showCustomMessage(`Project '${projectData.name}' updated successfully!`, 'green');
+                } else {
+                    // Add new project
+                    await firebase.addDoc(collectionRef, {
+                        ...projectData,
+                        createdAt: firebase.serverTimestamp(),
+                    });
+                    showCustomMessage(`Project '${projectData.name}' created successfully!`, 'green');
                 }
-            } else {
-                // Add new project
-                projects.push({ 
-                    id: generateId(), // Assign new local ID
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    ...projectData 
-                });
-                showCustomMessage(`Project '${projectData.name}' created successfully!`, 'green');
+            } catch (error) {
+                console.error("Firestore Save Error:", error);
+                showCustomMessage(`Error saving project: ${error.message}`, 'red');
             }
             
-            saveProjectsToStorage();
             document.getElementById('project-modal').style.display = 'none';
         };
         
@@ -399,92 +479,23 @@
             lucide.createIcons();
         };
 
-        /** Deletes a project from the local array. */
-        const deleteProject = () => {
+        /** Deletes a project from Firestore. */
+        const deleteProject = async () => {
             const projectId = document.getElementById('confirm-delete-btn').dataset.projectId;
             const projectName = document.getElementById('delete-project-name').textContent;
-
-            projects = projects.filter(p => p.id !== projectId);
             
-            saveProjectsToStorage();
-            document.getElementById('delete-modal').style.display = 'none';
-            showCustomMessage(`Project '${projectName}' deleted permanently.`, 'red');
-        };
-
-        /** **NEW**: Triggers a direct file download of the JSON data. */
-        const initiateExport = () => {
-            if (projects.length === 0) {
-                showCustomMessage("No data to export. Add some projects first!", 'red');
-                return;
-            }
+            const collectionRef = getProjectsCollectionRef();
+            if (!collectionRef) return;
             
-            const jsonString = JSON.stringify(projects, null, 2);
-            // Create a filename using today's date
-            const dateStr = new Date().toISOString().split('T')[0];
-            const filename = `PFET_Backup_${dateStr}.json`;
-
-            // Create a Blob from the JSON string
-            const blob = new Blob([jsonString], { type: 'application/json' });
-            
-            // Create a temporary link element
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = filename;
-
-            // Trigger the download immediately
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            showCustomMessage(`Backup file '${filename}' downloaded successfully!`, 'green');
-        };
-        
-        /** Opens the import modal. */
-        const initiateImport = () => {
-            document.getElementById('import-json-input').value = '';
-            document.getElementById('import-status').classList.add('hidden');
-            document.getElementById('import-modal').style.display = 'flex';
-        };
-
-        /** Handles the import of projects from a pasted JSON string. */
-        const importData = (e) => {
-            e.preventDefault();
-            const inputElement = document.getElementById('import-json-input');
-            const statusElement = document.getElementById('import-status');
-            const jsonString = inputElement.value.trim();
-
-            statusElement.classList.add('hidden');
-            statusElement.classList.add('text-red-400'); // Default to red status
-            
-            if (!jsonString) {
-                statusElement.textContent = 'Please paste valid JSON data.';
-                statusElement.classList.remove('hidden');
-                return;
-            }
-
             try {
-                const importedData = JSON.parse(jsonString);
+                const docRef = firebase.doc(collectionRef, projectId);
+                await firebase.deleteDoc(docRef);
                 
-                // Basic validation: ensure it's an array and its contents look like projects (checking for 'name' property)
-                if (Array.isArray(importedData) && (importedData.length === 0 || importedData.every(item => item && typeof item === 'object' && item.name))) {
-                    
-                    // Replace current data and save
-                    projects = importedData;
-                    saveProjectsToStorage(); 
-                    
-                    showCustomMessage(`Successfully imported ${projects.length} projects!`, 'green');
-
-                    // Close modal
-                    document.getElementById('import-modal').style.display = 'none';
-                    inputElement.value = '';
-
-                } else {
-                    throw new Error("Data must be a valid array of project objects.");
-                }
+                document.getElementById('delete-modal').style.display = 'none';
+                showCustomMessage(`Project '${projectName}' deleted permanently.`, 'red');
             } catch (error) {
-                console.error("Import Error:", error);
-                statusElement.textContent = `Invalid JSON format or data structure. Please ensure you pasted the full project array.`;
-                statusElement.classList.remove('hidden');
+                console.error("Firestore Delete Error:", error);
+                showCustomMessage(`Error deleting project: ${error.message}`, 'red');
             }
         };
 
@@ -495,17 +506,21 @@
             const card = document.createElement('div');
             card.className = 'bg-card border border-gray-800 rounded-xl p-5 shadow-xl transition duration-300 hover:border-primary/50';
 
-            // Calculations
+            // Inputs
             const estimatedDays = project.estimatedDays || 1;
             const actualDays = project.actualDays || 0;
             const myPerDayCost = project.myPerDayCost || 0;
             const myShareCost = project.myShareCost || 0;
             const totalProjectCost = project.totalProjectCost || 0;
-
+            
+            // Calculated
             const effortVariance = actualDays - estimatedDays;
             const variance = getVarianceStyle(effortVariance);
             const myActualEffortCost = actualDays * myPerDayCost;
             const financialHealth = myShareCost - myActualEffortCost;
+
+            const earningPerDay = project.earningPerDay || 0;
+            const earningPerHour = project.earningPerHour || 0;
 
             const completionPct = Math.min(100, (actualDays / estimatedDays) * 100).toFixed(0);
             const progressBarColor = completionPct > 100 ? 'bg-red-600' : 'bg-green-600';
@@ -537,11 +552,24 @@
                     <p class="text-gray-400"><i data-lucide="tag" class="w-4 h-4 inline mr-2"></i>Type: <span class="text-white">${project.type}</span></p>
                     <p class="text-gray-400"><i data-lucide="code" class="w-4 h-4 inline mr-2"></i>Tech Stack: <span class="text-white">${project.techStack || 'N/A'}</span></p>
                 </div>
+                
+                <!-- NEW SECTION: FINANCIAL EARNINGS -->
+                <div class="grid grid-cols-2 gap-3 mb-4 bg-gray-900/50 p-3 rounded-lg border border-gray-800">
+                    <div class="">
+                        <p class="text-xs text-blue-400 font-semibold mb-1 flex items-center"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i> Projected Daily Earning</p>
+                        <p class="text-xl font-bold text-white">${formatCurrency(earningPerDay, 2)}</p>
+                    </div>
+                    <div class="">
+                        <p class="text-xs text-blue-400 font-semibold mb-1 flex items-center"><i data-lucide="clock" class="w-4 h-4 mr-1"></i> Projected Hourly Earning (8h/day)</p>
+                        <p class="text-xl font-bold text-white">${formatCurrency(earningPerHour, 2)}</p>
+                    </div>
+                </div>
 
+                <!-- Metrics Row -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 border-t border-b border-gray-800 py-4 mb-4">
                     <!-- Metric 1: My Effort Cost -->
                     <div class="p-3 bg-secondary rounded-lg">
-                        <p class="text-xs text-gray-400">My Actual Cost/Earned</p>
+                        <p class="text-xs text-gray-400">My Actual Cost/Burn</p>
                         <p class="text-base font-semibold text-primary">${formatCurrency(myActualEffortCost)}</p>
                     </div>
 
@@ -591,7 +619,6 @@
                 </div>
             `;
             
-            // Re-render lucide icons inside the card
             setTimeout(() => lucide.createIcons(), 0); 
             return card;
         };
@@ -633,7 +660,15 @@
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
-                projects.forEach(project => {
+                // Sort by creation date (optional, since there is no orderBy in query)
+                const sortedProjects = projects.slice().sort((a, b) => {
+                    // Use a fallback for objects (like serverTimestamp) that haven't resolved yet
+                    const dateA = a.createdAt?.seconds || 0;
+                    const dateB = b.createdAt?.seconds || 0;
+                    return dateB - dateA;
+                });
+
+                sortedProjects.forEach(project => {
                     projectListContainer.appendChild(createProjectCard(project));
                 });
             }
@@ -643,13 +678,11 @@
         // --- Initialization and Event Listeners ---
         
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Initial Load
-            loadProjectsFromStorage();
-            renderProjects();
+            // 1. Initial Firebase setup
+            firebaseInit();
             
             // 2. Set up Modals and Form Logic
             const projectModal = document.getElementById('project-modal');
-            const importModal = document.getElementById('import-modal');
 
             document.getElementById('add-project-btn').addEventListener('click', () => openModal());
             
@@ -676,14 +709,7 @@
                 }
             });
 
-            // 3. File Management Listeners
-            document.getElementById('export-data-btn').addEventListener('click', initiateExport);
-            
-            document.getElementById('import-data-btn').addEventListener('click', initiateImport);
-            document.getElementById('close-import-modal-btn').addEventListener('click', () => importModal.style.display = 'none');
-            document.getElementById('import-form').addEventListener('submit', importData);
-
-            // 4. Initial Icon Render
+            // 3. Initial Icon Render
             lucide.createIcons();
         });
     </script>
