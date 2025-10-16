@@ -3,715 +3,615 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFET - Firestore Project Tracker</title>
+    <title>Effort & Budget Tracker</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Firebase SDK Imports -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // Expose Firebase objects globally for use in the script below
-        window.firebase = {
-            initializeApp, getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged,
-            getFirestore, doc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, serverTimestamp, setLogLevel
-        };
-    </script>
-
     <style>
-        /* Custom scrollbar for dark mode */
-        body::-webkit-scrollbar { width: 8px; }
-        body::-webkit-scrollbar-track { background: #1f2937; }
-        body::-webkit-scrollbar-thumb { background: #4b5563; }
-        body::-webkit-scrollbar-thumb:hover { background: #6b7280; }
-        /* Style for required fields */
-        .required-label::after { content: ' *'; color: #ef4444; }
-        /* Ensure modals are on top */
-        .modal-overlay { z-index: 50; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        :root { font-family: 'Inter', sans-serif; }
+        /* Custom Scrollbar for Effort Log */
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6366f1; }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        'primary': '#2563eb', /* Blue-600 */
-                        'secondary': '#1f2937', /* Gray-800 */
-                        'card': '#111827', /* Gray-900 */
-                        'background': '#030712', /* Gray-950 */
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-background min-h-screen text-gray-100 font-sans p-4 md:p-8">
+<body class="min-h-screen bg-gray-900 text-white p-4 sm:p-8">
 
-    <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-800">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-white flex items-center">
-                <i data-lucide="cloud" class="w-7 h-7 mr-3 text-primary"></i>
-                PFET: Firestore Project Tracker
+    <header class="mb-8 border-b border-gray-800 pb-4">
+        <div class="flex justify-between items-center flex-wrap gap-4">
+            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-pink-500">
+                Effort & Budget Tracker
             </h1>
-            <button id="add-project-btn" class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition duration-200 flex items-center">
-                <i data-lucide="plus" class="w-5 h-5 mr-1"></i>
-                New Project
+            <button 
+                id="open-project-modal-btn" 
+                class="flex items-center px-4 py-2 bg-indigo-600 rounded-full text-white font-semibold shadow-lg hover:bg-indigo-500 transition duration-300 transform hover:scale-105"
+            >
+                <i data-lucide="plus" class="w-5 h-5 mr-2"></i> New Project
             </button>
-        </header>
-
-        <!-- Notification Bar (Toast) -->
-        <div id="message-box" class="fixed top-4 right-4 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 opacity-0 hidden z-50"></div>
-
-        <!-- Persistence Status & User ID -->
-        <div class="text-xs bg-gray-800/50 p-3 rounded-lg mb-6 flex justify-between items-center">
-            <p class="text-gray-400">
-                <i data-lucide="database" class="w-4 h-4 inline mr-1 text-green-400"></i>
-                Data is saved persistently in Firestore.
-            </p>
-            <p class="text-gray-400">
-                <span class="font-semibold text-white">User ID:</span> 
-                <span id="user-id-display" class="font-mono text-gray-300">Loading...</span>
-            </p>
         </div>
-        
-        <!-- Loading State -->
-        <div id="loading-state" class="text-center p-12 text-gray-500 flex flex-col items-center justify-center">
-            <svg class="animate-spin h-8 w-8 text-primary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="text-lg">Connecting to database and loading projects...</p>
+    </header>
+
+    <!-- Status Banner for Firebase -->
+    <div id="status-banner-container" class="mb-6"></div>
+
+    <!-- Main Content/Loading Area -->
+    <div id="main-content-area">
+        <div id="loading-indicator" class="flex justify-center items-center h-48 hidden">
+            <i data-lucide="loader" class="w-8 h-8 animate-spin text-indigo-500"></i>
+            <p class="ml-3 text-lg text-gray-400">Loading projects...</p>
         </div>
-
-
-        <!-- Dashboard Summary -->
-        <section id="dashboard-summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10 hidden">
-            <!-- Summary cards will be injected here -->
-        </section>
-
-        <!-- Project List -->
-        <section>
-            <h2 class="text-2xl font-bold mb-4 text-white">Project Portfolio</h2>
-            <div id="project-list-container" class="space-y-4">
-                <p id="empty-state" class="text-center p-8 text-gray-500 hidden">
-                    No projects found. Click "New Project" to add your first entry!
-                </p>
-            </div>
-        </section>
+        <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Project Cards will be injected here -->
+        </div>
     </div>
-
-    <!-- Project Form Modal -->
-    <div id="project-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center modal-overlay p-4">
-        <div class="bg-card w-full max-w-2xl rounded-xl shadow-2xl p-6 md:p-8 transform transition-all duration-300">
-            <h3 id="modal-title" class="text-xl md:text-2xl font-bold text-white mb-6 border-b border-gray-800 pb-3">Add New Project</h3>
-            
-            <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    
+    <!-- Project Modal (Add/Edit) -->
+    <div id="project-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4" onclick="closeModal('project-modal')">
+        <div class="bg-gray-900 rounded-xl shadow-2xl p-6 w-full max-w-md border border-indigo-600" onclick="event.stopPropagation()">
+            <h2 id="project-modal-title" class="text-2xl font-bold text-white mb-4 border-b pb-2 border-gray-700">New Project</h2>
+            <form id="project-form" class="space-y-4">
+                <input type="hidden" id="project-id-input">
+                <div>
+                    <label for="project-name" class="block text-gray-300 mb-1">Project Name</label>
+                    <input
+                        type="text"
+                        id="project-name"
+                        required
+                        class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                        placeholder="e.g., Client Website Redesign"
+                    >
+                </div>
+                <div>
+                    <label for="project-budget" class="block text-gray-300 mb-1">Total Budget ($)</label>
+                    <input
+                        type="number"
+                        id="project-budget"
+                        min="0"
+                        step="0.01"
+                        required
+                        class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                        placeholder="e.g., 5000.00"
+                    >
+                </div>
                 
-                <!-- Hidden Input for Editing -->
-                <input type="hidden" id="project-id">
-
-                <!-- Row 1: Name and Type -->
-                <div class="col-span-1">
-                    <label for="name" class="required-label block text-sm font-medium text-gray-400">Project Name</label>
-                    <input type="text" id="name" required class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-                <div class="col-span-1">
-                    <label for="type" class="block text-sm font-medium text-gray-400">Project Type</label>
-                    <select id="type" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                        <option value="Client Work">Client Work</option>
-                        <option value="Internal Tool">Internal Tool</option>
-                        <option value="Personal Project">Personal Project</option>
-                        <option value="Investment">Investment</option>
-                    </select>
-                </div>
-
-                <!-- Row 2: Status and Tech Stack -->
-                <div class="col-span-1">
-                    <label for="status" class="block text-sm font-medium text-gray-400">Status</label>
-                    <select id="status" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                        <option value="Planned">Planned</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="On Hold">On Hold</option>
-                        <option value="Complete">Complete</option>
-                    </select>
-                </div>
-                <div class="col-span-1">
-                    <label for="techStack" class="block text-sm font-medium text-gray-400">Tech Stack (e.g., React, Node, SQL)</label>
-                    <input type="text" id="techStack" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-
-                <!-- Row 3: Cost Metrics -->
-                <div class="col-span-1">
-                    <label for="totalProjectCost" class="block text-sm font-medium text-gray-400">Total Project Cost ($)</label>
-                    <input type="number" id="totalProjectCost" value="0" min="0" step="0.01" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-                <div class="col-span-1">
-                    <label for="myShareCost" class="block text-sm font-medium text-gray-400">My Financial Share ($)</label>
-                    <input type="number" id="myShareCost" value="0" min="0" step="0.01" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-
-                <!-- Row 4: My Rate and Start Date -->
-                <div class="col-span-1">
-                    <label for="myPerDayCost" class="required-label block text-sm font-medium text-gray-400">My Per Day Cost/Rate ($)</label>
-                    <input type="number" id="myPerDayCost" value="100" required min="0" step="0.01" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-                <div class="col-span-1">
-                    <label for="startDate" class="block text-sm font-medium text-gray-400">Start Date</label>
-                    <input type="date" id="startDate" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-
-                <!-- Row 5: Effort Tracking -->
-                <div class="col-span-1">
-                    <label for="estimatedDays" class="required-label block text-sm font-medium text-gray-400">Estimated Days</label>
-                    <input type="number" id="estimatedDays" value="1" required min="1" step="1" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-                <div class="col-span-1">
-                    <label for="actualDays" class="required-label block text-sm font-medium text-gray-400">Actual Days Logged</label>
-                    <input type="number" id="actualDays" value="0" required min="0" step="1" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary">
-                </div>
-
-                <!-- Row 6: Notes -->
-                <div class="md:col-span-2">
-                    <label for="notes" class="block text-sm font-medium text-gray-400">Essential Notes</label>
-                    <textarea id="notes" rows="3" class="mt-1 block w-full bg-secondary border border-gray-700 rounded-lg p-2.5 text-white focus:ring-primary focus:border-primary"></textarea>
-                </div>
-
-                <!-- Buttons -->
-                <div class="md:col-span-2 flex justify-end space-x-3 mt-4">
-                    <button type="button" id="close-modal-btn" class="px-4 py-2 text-gray-400 hover:text-white rounded-lg transition duration-200">
+                <div class="mt-6 flex justify-end pt-4 border-t border-gray-800">
+                    <button type="button" onclick="closeModal('project-modal')" class="px-4 py-2 text-sm font-semibold rounded-lg text-gray-300 hover:bg-gray-700 transition">
                         Cancel
                     </button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-md">
-                        Save Project
+                    <button type="submit" id="project-save-btn" class="ml-3 px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition flex items-center">
+                        <i data-lucide="plus" class="w-5 h-5 mr-2"></i> Save Project
                     </button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- Delete Confirmation Modal (Custom Modal) -->
-    <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center modal-overlay p-4">
-        <div class="bg-card w-full max-w-sm rounded-xl shadow-2xl p-6">
-            <h3 class="text-xl font-bold text-red-400 mb-4 flex items-center">
-                <i data-lucide="alert-triangle" class="w-6 h-6 mr-2"></i>
-                Confirm Deletion
-            </h3>
-            <p class="text-gray-300 mb-6">Are you sure you want to delete the project: <strong id="delete-project-name"></strong>? This cannot be undone.</p>
-            <div class="flex justify-end space-x-3">
-                <button id="cancel-delete-btn" class="px-4 py-2 text-gray-400 hover:text-white rounded-lg transition duration-200">
-                    Cancel
-                </button>
-                <button id="confirm-delete-btn" data-project-id="" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-200">
-                    Delete Permanently
-                </button>
-            </div>
+
+    <!-- Effort Modal (Add/Edit) -->
+    <div id="effort-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 p-4" onclick="closeModal('effort-modal')">
+        <div class="bg-gray-900 rounded-xl shadow-2xl p-6 w-full max-w-md border border-indigo-600" onclick="event.stopPropagation()">
+            <h2 id="effort-modal-title" class="text-2xl font-bold text-white mb-4 border-b pb-2 border-gray-700">Log Effort</h2>
+            <form id="effort-form" class="space-y-4">
+                <input type="hidden" id="effort-project-id">
+                <input type="hidden" id="effort-id-input">
+
+                <div>
+                    <label for="effort-description" class="block text-gray-300 mb-1">Description</label>
+                    <input
+                        type="text"
+                        id="effort-description"
+                        required
+                        class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                        placeholder="e.g., Wireframing, Backend setup"
+                    >
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label for="effort-hours" class="block text-gray-300 mb-1">Hours</label>
+                        <input
+                            type="number"
+                            id="effort-hours"
+                            min="0.5"
+                            step="0.5"
+                            required
+                            class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                            value="1"
+                        >
+                    </div>
+                    <div class="col-span-2">
+                        <label for="effort-cost" class="block text-gray-300 mb-1">Cost per Hour ($)</label>
+                        <input
+                            type="number"
+                            id="effort-cost"
+                            min="0"
+                            step="0.01"
+                            required
+                            class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                            value="50.00"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label for="effort-date" class="block text-gray-300 mb-1">Date</label>
+                    <input
+                        type="date"
+                        id="effort-date"
+                        required
+                        class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                    >
+                </div>
+                
+                <div class="mt-6 flex justify-end pt-4 border-t border-gray-800">
+                    <button type="button" onclick="closeModal('effort-modal')" class="px-4 py-2 text-sm font-semibold rounded-lg text-gray-300 hover:bg-gray-700 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="ml-3 px-4 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition flex items-center">
+                        <i data-lucide="save" class="w-5 h-5 mr-2"></i> Save Effort
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-    
-    <script>
-        // Global state and constants
-        const HOURS_PER_DAY = 8;
-        let db;
-        let auth;
-        let userId = null;
+
+
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, addDoc, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase variables
+        let app, db, auth, userId = null;
         let projects = [];
-        let unsubscribe = null; // To hold the onSnapshot listener cleanup function
+        let firebaseError = '';
 
-        // Global environment variables (expected to be injected by the runtime)
-        // These are accessed via global variables provided by the canvas environment.
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        const projectListContainer = document.getElementById('project-list-container');
-        const emptyState = document.getElementById('empty-state');
-        const dashboardSummary = document.getElementById('dashboard-summary');
-        const messageBox = document.getElementById('message-box');
-        const loadingState = document.getElementById('loading-state');
-        const userIdDisplay = document.getElementById('user-id-display');
+        // --- GLOBAL UTILITIES ---
 
-        // --- Utility Functions ---
-
-        /** Shows a temporary message notification (Toast). */
-        const showCustomMessage = (message, type = 'green') => {
-            messageBox.textContent = message;
-            messageBox.className = `fixed top-4 right-4 p-4 rounded-lg shadow-xl text-white transition-opacity duration-300 z-50`;
-            
-            if (type === 'green') {
-                messageBox.classList.add('bg-green-600');
-            } else if (type === 'red') {
-                messageBox.classList.add('bg-red-600');
-            } else {
-                messageBox.classList.add('bg-gray-600');
-            }
-
-            messageBox.classList.remove('hidden', 'opacity-0');
-            messageBox.classList.add('opacity-100');
-
-            setTimeout(() => {
-                messageBox.classList.remove('opacity-100');
-                messageBox.classList.add('opacity-0');
-                setTimeout(() => {
-                    messageBox.classList.add('hidden');
-                    messageBox.classList.remove('bg-green-600', 'bg-red-600', 'bg-gray-600'); 
-                }, 300);
-            }, 3000); 
-        };
-
-        /** Formats a number as currency (USD). */
-        const formatCurrency = (amount, decimals = 0) => {
-            return new Intl.NumberFormat('en-US', { 
-                style: 'currency', 
-                currency: 'USD', 
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals 
-            }).format(amount);
-        };
-
-        /** Calculates variance color and icon. */
-        const getVarianceStyle = (variance) => {
-            if (variance > 0) return { color: 'text-red-400', icon: 'trending-up', text: `+${variance} Days` };
-            if (variance < 0) return { color: 'text-green-400', icon: 'trending-down', text: `${variance} Days` };
-            return { color: 'text-gray-400', icon: 'minus', text: `0 Days` };
-        };
-
-
-        // --- Firestore Setup and Listener ---
-
-        const getProjectsCollectionRef = () => {
-            if (!db || !userId) {
-                console.error("Firestore DB or User ID not initialized. Cannot create collection reference.");
-                return null;
-            }
-            // Private data path: /artifacts/{appId}/users/{userId}/projects
-            const path = `artifacts/${appId}/users/${userId}/projects`;
-            return firebase.collection(db, path);
-        };
-
-        const setupRealtimeListener = () => {
-            // If a previous listener exists, stop it
-            if (unsubscribe) {
-                unsubscribe();
-            }
-
-            const collectionRef = getProjectsCollectionRef();
-            if (!collectionRef) return;
-            
-            // Query for projects (No orderBy to avoid index requirement issues)
-            const q = firebase.query(collectionRef);
-
-            // Start listening for real-time updates
-            unsubscribe = firebase.onSnapshot(q, (snapshot) => {
-                loadingState.classList.add('hidden');
-                dashboardSummary.classList.remove('hidden');
-
-                projects = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                
-                renderProjects();
-            }, (error) => {
-                console.error("Firestore Snapshot Error:", error);
-                showCustomMessage(`Error fetching data: ${error.message}`, 'red');
-                loadingState.classList.add('hidden');
-            });
+        window.showLoading = (show) => {
+            const loading = document.getElementById('loading-indicator');
+            loading.classList.toggle('hidden', !show);
+            document.getElementById('projects-container').classList.toggle('hidden', show);
         };
         
-        /** Initializes Firebase App and sets up Auth State Listener */
-        const firebaseInit = () => {
-            if (Object.keys(firebaseConfig).length === 0) {
-                 console.error("Firebase config is empty. Cannot initialize.");
-                 showCustomMessage("Firebase configuration missing. Data will not persist.", 'red');
-                 loadingState.classList.add('hidden');
-                 return;
-            }
+        window.closeModal = (id) => {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).style.display = 'none';
+        };
 
+        const renderStatusBanner = () => {
+            const container = document.getElementById('status-banner-container');
+            if (firebaseError) {
+                container.innerHTML = `
+                    <div class="flex items-center p-4 bg-red-800 border-l-4 border-red-500 text-white rounded-lg shadow-md">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 mr-3"></i>
+                        <p class="font-semibold">${firebaseError}</p>
+                    </div>
+                `;
+            } else if (userId) {
+                container.innerHTML = `
+                    <div class="flex items-center p-3 bg-green-800 border-l-4 border-green-500 text-white rounded-lg shadow-md">
+                        <i data-lucide="check-circle" class="w-5 h-5 mr-3"></i>
+                        <p class="text-sm">Data saving is <strong>enabled</strong>. User ID: <span class="font-mono text-xs">${userId}</span></p>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+        };
+
+        // --- FIREBASE INITIALIZATION ---
+
+        const initAppAndAuth = async () => {
             try {
-                // Set Debug logs for better understanding
-                firebase.setLogLevel('Debug');
-                
-                const app = firebase.initializeApp(firebaseConfig);
-                db = firebase.getFirestore(app);
-                auth = firebase.getAuth(app);
+                // 1. Check for configuration
+                if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+                    throw new Error("Missing global variable: __firebase_config. Cannot initialize Firebase.");
+                }
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-                // 1. Handle Authentication
-                firebase.onAuthStateChanged(auth, async (user) => {
+                // 2. Initialize App and Services
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // 3. Auth Listener
+                onAuthStateChanged(auth, (user) => {
                     if (user) {
                         userId = user.uid;
-                        userIdDisplay.textContent = userId;
-                        setupRealtimeListener();
+                        console.log("User authenticated. UID:", userId);
+                        renderStatusBanner();
+                        // Start listening to data once authenticated
+                        setupDataListener(); 
                     } else {
-                        // Attempt sign-in with custom token or anonymously
-                        try {
-                            if (initialAuthToken) {
-                                // Use the custom token provided by the environment
-                                await firebase.signInWithCustomToken(auth, initialAuthToken);
-                            } else {
-                                // Fallback to anonymous sign-in
-                                const anonUser = await firebase.signInAnonymously(auth);
-                                userId = anonUser.user.uid;
-                                userIdDisplay.textContent = userId;
-                                setupRealtimeListener();
-                            }
-                        } catch (error) {
-                            console.error("Authentication Error:", error);
-                            showCustomMessage(`Auth failed: ${error.message}. Check console for details.`, 'red');
-                            userIdDisplay.textContent = 'Auth Failed';
-                            loadingState.classList.add('hidden');
-                        }
+                        userId = null;
+                        console.log("User signed out or failed to sign in.");
+                        renderStatusBanner();
+                        window.showLoading(false);
                     }
                 });
 
-            } catch (e) {
-                console.error("Firebase Initialization Error:", e);
-                showCustomMessage(`Critical Error during setup: ${e.message}`, 'red');
+                // 4. Sign In
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+            } catch (error) {
+                console.error("Firebase setup failed:", error);
+                firebaseError = `Setup Failed: ${error.message}`;
+                renderStatusBanner();
+                window.showLoading(false);
             }
         };
 
-        // --- Project Data Functions (CRUD) ---
+        // --- FIRESTORE DATA LISTENER ---
 
-        /** Opens the modal for adding or editing a project. */
-        const openModal = (project = null) => {
-            const modal = document.getElementById('project-modal');
-            const form = document.getElementById('project-form');
-            const modalTitle = document.getElementById('modal-title');
+        const setupDataListener = () => {
+            if (!db || !userId) return;
+
+            window.showLoading(true);
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            // Path: /artifacts/{appId}/users/{userId}/projects
+            const userProjectsCollection = collection(db, 'artifacts', appId, 'users', userId, 'projects');
             
-            form.reset();
-            document.getElementById('project-id').value = '';
+            // Real-time listener
+            onSnapshot(userProjectsCollection, (snapshot) => {
+                try {
+                    projects = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data(),
+                        // Ensure 'effort' is an array
+                        effort: doc.data().effort || []
+                    })).sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+                    
+                    renderProjects();
+                } catch(e) {
+                    console.error("Error processing project snapshot:", e);
+                } finally {
+                    window.showLoading(false);
+                }
+            }, (error) => {
+                console.error("Firestore error:", error);
+                firebaseError = `Data Load Error: ${error.message}`;
+                renderStatusBanner();
+                window.showLoading(false);
+            });
+        };
+
+        // --- METRICS CALCULATION ---
+
+        const calculateMetrics = (project) => {
+            const totalHours = project.effort.reduce((sum, e) => sum + (e.hours || 0), 0);
+            const totalCost = project.effort.reduce((sum, e) => sum + ((e.hours || 0) * (e.costPerHour || 0)), 0);
+            const remainingBudget = (project.budget || 0) - totalCost;
+
+            return {
+                totalHours,
+                totalCost,
+                remainingBudget,
+                progress: project.budget > 0 ? Math.min(100, (totalCost / project.budget) * 100) : 0
+            };
+        };
+
+        // --- RENDER FUNCTIONS ---
+
+        const renderEffortLog = (project) => {
+            const effortSorted = [...project.effort].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
             
-            if (project) {
-                modalTitle.textContent = `Edit Project: ${project.name}`;
-                document.getElementById('project-id').value = project.id;
-                document.getElementById('name').value = project.name;
-                document.getElementById('type').value = project.type;
-                document.getElementById('status').value = project.status;
-                document.getElementById('techStack').value = project.techStack;
-                document.getElementById('totalProjectCost').value = project.totalProjectCost;
-                document.getElementById('myShareCost').value = project.myShareCost;
-                document.getElementById('myPerDayCost').value = project.myPerDayCost;
-                document.getElementById('estimatedDays').value = project.estimatedDays;
-                document.getElementById('actualDays').value = project.actualDays;
-                document.getElementById('startDate').value = project.startDate;
-                document.getElementById('notes').value = project.notes;
-            } else {
-                modalTitle.textContent = 'Add New Project';
-                // Set default values for new project
-                document.getElementById('myPerDayCost').value = 100;
-                document.getElementById('estimatedDays').value = 1;
+            if (effortSorted.length === 0) {
+                return '<p class="text-gray-500 italic">No effort logged yet.</p>';
             }
+
+            return `
+                <ul class="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                    ${effortSorted.map(e => `
+                        <li class="bg-gray-700 p-2 rounded-lg flex justify-between items-center text-sm">
+                            <div class="flex flex-col">
+                                <span class="text-gray-200 font-medium">${e.description}</span>
+                                <span class="text-gray-400 text-xs">
+                                    ${e.hours.toFixed(1)} hrs @ $${e.costPerHour.toFixed(2)}/hr (${new Date(e.timestamp).toLocaleDateString()})
+                                </span>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="openEffortModal('${project.id}', '${e.id}')" class="text-indigo-400 hover:text-indigo-300">
+                                    <i data-lucide="edit" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="handleDeleteEffort('${project.id}', '${e.id}')" class="text-red-400 hover:text-red-300">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+        };
+
+        const renderProjectCard = (project) => {
+            const metrics = calculateMetrics(project);
+            const totalRemainingColor = metrics.remainingBudget < 0 ? 'bg-red-500' : (metrics.remainingBudget < project.budget * 0.2 ? 'bg-yellow-500' : 'bg-green-500');
+
+            return `
+                <div id="card-${project.id}" class="project-card bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 hover:border-indigo-500 transition duration-300" data-expanded="false">
+                    <div class="flex justify-between items-center cursor-pointer" onclick="toggleProjectExpansion('${project.id}')">
+                        <h3 class="text-xl font-bold text-white truncate">${project.name}</h3>
+                        <div class="flex items-center space-x-3">
+                            <span class="px-3 py-1 text-sm font-semibold rounded-full text-white ${totalRemainingColor}">
+                                $${metrics.remainingBudget.toFixed(2)}
+                            </span>
+                            <button onclick="event.stopPropagation(); openProjectModal('${project.id}')" class="text-indigo-400 hover:text-indigo-300 transition">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="event.stopPropagation(); handleDeleteProject('${project.id}')" class="text-red-400 hover:text-red-300 transition">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="flex justify-between text-sm text-gray-400">
+                            <span>Budget: $${project.budget.toFixed(2)}</span>
+                            <span>Spent: $${metrics.totalCost.toFixed(2)}</span>
+                        </div>
+                        <div class="mt-2 w-full bg-gray-700 rounded-full h-2.5">
+                            <div 
+                                class="h-2.5 rounded-full transition-all duration-500 ${metrics.progress > 100 ? 'bg-red-600' : 'bg-indigo-500'}" 
+                                style="width: ${Math.min(100, metrics.progress)}%"
+                            ></div>
+                        </div>
+                        <p class="text-sm text-gray-400 mt-1">Progress: ${metrics.progress.toFixed(1)}% (${metrics.totalHours.toFixed(1)} hrs)</p>
+                    </div>
+                    
+                    <div id="effort-log-${project.id}" class="hidden mt-4 pt-4 border-t border-gray-700">
+                        <div class="flex justify-between items-center mb-3">
+                            <h4 class="text-lg font-semibold text-white">Effort Log (${project.effort.length})</h4>
+                            <button onclick="openEffortModal('${project.id}')" class="flex items-center text-sm px-3 py-1 bg-indigo-600 hover:bg-indigo-500 rounded-full text-white transition">
+                                <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Log Effort
+                            </button>
+                        </div>
+                        ${renderEffortLog(project)}
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderProjects = () => {
+            const container = document.getElementById('projects-container');
+            if (projects.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-10 border-4 border-dashed border-gray-700 rounded-xl mt-10 md:col-span-3">
+                        <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto text-gray-500 mb-4"></i>
+                        <p class="text-lg text-gray-400">No projects found. Start by creating a new one!</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = projects.map(renderProjectCard).join('');
+            }
+            lucide.createIcons(); // Re-render icons after DOM manipulation
+        };
+
+        // --- PROJECT CRUD ---
+
+        window.openProjectModal = (projectId = null) => {
+            const modal = document.getElementById('project-modal');
+            const title = document.getElementById('project-modal-title');
+            const saveBtn = document.getElementById('project-save-btn');
+            const nameInput = document.getElementById('project-name');
+            const budgetInput = document.getElementById('project-budget');
+            const idInput = document.getElementById('project-id-input');
+
+            if (projectId) {
+                const project = projects.find(p => p.id === projectId);
+                if (!project) return;
+                title.textContent = 'Edit Project';
+                saveBtn.innerHTML = '<i data-lucide="save" class="w-5 h-5 mr-2"></i> Update Project';
+                nameInput.value = project.name;
+                budgetInput.value = project.budget.toFixed(2);
+                idInput.value = projectId;
+            } else {
+                title.textContent = 'New Project';
+                saveBtn.innerHTML = '<i data-lucide="plus" class="w-5 h-5 mr-2"></i> Create Project';
+                nameInput.value = '';
+                budgetInput.value = '';
+                idInput.value = '';
+            }
+            modal.classList.remove('hidden');
             modal.style.display = 'flex';
             lucide.createIcons();
         };
 
-        /** Saves a new project or updates an existing one to Firestore. */
-        const saveProject = async (e) => {
+        document.getElementById('project-form').onsubmit = async (e) => {
             e.preventDefault();
-            const projectId = document.getElementById('project-id').value;
-            
-            // 1. Collect and calculate
-            const myShareCost = parseFloat(document.getElementById('myShareCost').value || 0);
-            const estimatedDays = parseInt(document.getElementById('estimatedDays').value || 1);
-            
-            let earningPerDay = 0;
-            let earningPerHour = 0;
-            
-            if (estimatedDays > 0) {
-                earningPerDay = myShareCost / estimatedDays;
-                earningPerHour = earningPerDay / HOURS_PER_DAY;
-            }
+            if (!db || !userId) return;
+
+            window.showLoading(true);
+            const projectId = document.getElementById('project-id-input').value;
+            const name = document.getElementById('project-name').value;
+            const budget = parseFloat(document.getElementById('project-budget').value);
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const projectRef = collection(db, 'artifacts', appId, 'users', userId, 'projects');
 
             const projectData = {
-                name: document.getElementById('name').value,
-                type: document.getElementById('type').value,
-                status: document.getElementById('status').value,
-                techStack: document.getElementById('techStack').value,
-                
-                totalProjectCost: parseFloat(document.getElementById('totalProjectCost').value || 0),
-                myShareCost: myShareCost,
-                myPerDayCost: parseFloat(document.getElementById('myPerDayCost').value || 0),
-                estimatedDays: estimatedDays,
-                actualDays: parseInt(document.getElementById('actualDays').value || 0),
-
-                startDate: document.getElementById('startDate').value,
-                notes: document.getElementById('notes').value,
-                
-                earningPerDay: parseFloat(earningPerDay.toFixed(2)),
-                earningPerHour: parseFloat(earningPerHour.toFixed(2)),
-                updatedAt: firebase.serverTimestamp(),
+                name: name,
+                budget: budget,
             };
-
-            const collectionRef = getProjectsCollectionRef();
-            if (!collectionRef) return;
 
             try {
                 if (projectId) {
                     // Update existing project
-                    const docRef = firebase.doc(collectionRef, projectId);
-                    await firebase.updateDoc(docRef, projectData);
-                    showCustomMessage(`Project '${projectData.name}' updated successfully!`, 'green');
+                    await updateDoc(doc(projectRef, projectId), projectData);
                 } else {
                     // Add new project
-                    await firebase.addDoc(collectionRef, {
+                    await addDoc(projectRef, {
                         ...projectData,
-                        createdAt: firebase.serverTimestamp(),
+                        effort: [],
+                        createdAt: serverTimestamp()
                     });
-                    showCustomMessage(`Project '${projectData.name}' created successfully!`, 'green');
                 }
-            } catch (error) {
-                console.error("Firestore Save Error:", error);
-                showCustomMessage(`Error saving project: ${error.message}`, 'red');
-            }
-            
-            document.getElementById('project-modal').style.display = 'none';
-        };
-        
-        /** Initiates the delete confirmation modal. */
-        const initiateDelete = (projectId, projectName) => {
-            document.getElementById('delete-project-name').textContent = projectName;
-            document.getElementById('confirm-delete-btn').dataset.projectId = projectId;
-            document.getElementById('delete-modal').style.display = 'flex';
-            lucide.createIcons();
-        };
-
-        /** Deletes a project from Firestore. */
-        const deleteProject = async () => {
-            const projectId = document.getElementById('confirm-delete-btn').dataset.projectId;
-            const projectName = document.getElementById('delete-project-name').textContent;
-            
-            const collectionRef = getProjectsCollectionRef();
-            if (!collectionRef) return;
-            
-            try {
-                const docRef = firebase.doc(collectionRef, projectId);
-                await firebase.deleteDoc(docRef);
-                
-                document.getElementById('delete-modal').style.display = 'none';
-                showCustomMessage(`Project '${projectName}' deleted permanently.`, 'red');
-            } catch (error) {
-                console.error("Firestore Delete Error:", error);
-                showCustomMessage(`Error deleting project: ${error.message}`, 'red');
+                window.closeModal('project-modal');
+            } catch (e) {
+                console.error("Error saving project:", e);
+                alert('Failed to save project. Check console for details.');
+            } finally {
+                window.showLoading(false);
             }
         };
 
-        // --- Rendering Functions ---
+        window.handleDeleteProject = async (projectId) => {
+            if (!db || !userId) return;
 
-        /** Renders a single project card. */
-        const createProjectCard = (project) => {
-            const card = document.createElement('div');
-            card.className = 'bg-card border border-gray-800 rounded-xl p-5 shadow-xl transition duration-300 hover:border-primary/50';
-
-            // Inputs
-            const estimatedDays = project.estimatedDays || 1;
-            const actualDays = project.actualDays || 0;
-            const myPerDayCost = project.myPerDayCost || 0;
-            const myShareCost = project.myShareCost || 0;
-            const totalProjectCost = project.totalProjectCost || 0;
-            
-            // Calculated
-            const effortVariance = actualDays - estimatedDays;
-            const variance = getVarianceStyle(effortVariance);
-            const myActualEffortCost = actualDays * myPerDayCost;
-            const financialHealth = myShareCost - myActualEffortCost;
-
-            const earningPerDay = project.earningPerDay || 0;
-            const earningPerHour = project.earningPerHour || 0;
-
-            const completionPct = Math.min(100, (actualDays / estimatedDays) * 100).toFixed(0);
-            const progressBarColor = completionPct > 100 ? 'bg-red-600' : 'bg-green-600';
-
-            // Status Badge Colors
-            const statusColors = {
-                'Planned': 'bg-blue-500/20 text-blue-300',
-                'In Progress': 'bg-yellow-500/20 text-yellow-300',
-                'On Hold': 'bg-gray-500/20 text-gray-300',
-                'Complete': 'bg-green-500/20 text-green-300',
-            };
-            const statusBadgeClass = statusColors[project.status] || 'bg-gray-500/20 text-gray-300';
-            
-            // Financial Health Icon/Color
-            const healthStyle = financialHealth >= 0 
-                ? { color: 'text-green-400', icon: 'dollar-sign' }
-                : { color: 'text-red-400', icon: 'wallet' };
-
-            // HTML Structure
-            card.innerHTML = `
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-xl font-bold text-white">${project.name}</h3>
-                    <div class="flex space-x-2">
-                        <span class="text-xs font-semibold px-3 py-1 rounded-full ${statusBadgeClass}">${project.status}</span>
-                    </div>
-                </div>
-
-                <div class="text-sm mb-4 space-y-2">
-                    <p class="text-gray-400"><i data-lucide="tag" class="w-4 h-4 inline mr-2"></i>Type: <span class="text-white">${project.type}</span></p>
-                    <p class="text-gray-400"><i data-lucide="code" class="w-4 h-4 inline mr-2"></i>Tech Stack: <span class="text-white">${project.techStack || 'N/A'}</span></p>
-                </div>
-                
-                <!-- NEW SECTION: FINANCIAL EARNINGS -->
-                <div class="grid grid-cols-2 gap-3 mb-4 bg-gray-900/50 p-3 rounded-lg border border-gray-800">
-                    <div class="">
-                        <p class="text-xs text-blue-400 font-semibold mb-1 flex items-center"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i> Projected Daily Earning</p>
-                        <p class="text-xl font-bold text-white">${formatCurrency(earningPerDay, 2)}</p>
-                    </div>
-                    <div class="">
-                        <p class="text-xs text-blue-400 font-semibold mb-1 flex items-center"><i data-lucide="clock" class="w-4 h-4 mr-1"></i> Projected Hourly Earning (8h/day)</p>
-                        <p class="text-xl font-bold text-white">${formatCurrency(earningPerHour, 2)}</p>
-                    </div>
-                </div>
-
-                <!-- Metrics Row -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 border-t border-b border-gray-800 py-4 mb-4">
-                    <!-- Metric 1: My Effort Cost -->
-                    <div class="p-3 bg-secondary rounded-lg">
-                        <p class="text-xs text-gray-400">My Actual Cost/Burn</p>
-                        <p class="text-base font-semibold text-primary">${formatCurrency(myActualEffortCost)}</p>
-                    </div>
-
-                    <!-- Metric 2: Effort Variance -->
-                    <div class="p-3 bg-secondary rounded-lg">
-                        <p class="text-xs text-gray-400">Effort Variance</p>
-                        <p class="text-base font-semibold ${variance.color} flex items-center">
-                            <i data-lucide="${variance.icon}" class="w-4 h-4 mr-1"></i>
-                            ${variance.text}
-                        </p>
-                    </div>
-                    
-                    <!-- Metric 3: Financial Health -->
-                    <div class="p-3 bg-secondary rounded-lg">
-                        <p class="text-xs text-gray-400">Net Health (Share - Cost)</p>
-                        <p class="text-base font-semibold ${healthStyle.color}">${formatCurrency(financialHealth)}</p>
-                    </div>
-
-                    <!-- Metric 4: My Share Pct -->
-                    <div class="p-3 bg-secondary rounded-lg">
-                        <p class="text-xs text-gray-400">My Share / Total Cost</p>
-                        <p class="text-base font-semibold text-white">
-                            ${myShareCost > 0 && totalProjectCost > 0 ? (myShareCost / totalProjectCost * 100).toFixed(1) + '%' : 'N/A'}
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Progress Bar -->
-                <div class="mb-4">
-                    <div class="flex justify-between text-xs font-medium text-gray-400">
-                        <span>Effort Logged: ${actualDays} / ${estimatedDays} Days</span>
-                        <span class="text-white">${completionPct}%</span>
-                    </div>
-                    <div class="w-full bg-secondary rounded-full h-2.5">
-                        <div class="${progressBarColor} h-2.5 rounded-full" style="width: ${completionPct}%"></div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="flex justify-end space-x-3 mt-4 pt-4 border-t border-gray-900">
-                    <button data-id="${project.id}" data-name="${project.name}" class="delete-btn text-red-500 hover:text-red-400 transition duration-200 p-1 rounded-lg hover:bg-red-900/20">
-                        <i data-lucide="trash-2" class="w-5 h-5"></i>
-                    </button>
-                    <button data-id="${project.id}" class="edit-btn text-primary hover:text-blue-400 transition duration-200 p-1 rounded-lg hover:bg-blue-900/20">
-                        <i data-lucide="square-pen" class="w-5 h-5"></i>
-                    </button>
-                </div>
-            `;
-            
-            setTimeout(() => lucide.createIcons(), 0); 
-            return card;
+            if (confirm("Are you sure you want to delete this project and all its effort data?")) {
+                window.showLoading(true);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const docRef = doc(db, 'artifacts', appId, 'users', userId, 'projects', projectId);
+                try {
+                    await deleteDoc(docRef);
+                } catch (e) {
+                    console.error("Error deleting project:", e);
+                    alert('Failed to delete project. Check console for details.');
+                } finally {
+                    window.showLoading(false);
+                }
+            }
         };
 
-        /** Renders the dashboard summary cards. */
-        const renderDashboardSummary = (projects) => {
-            const summary = {
-                totalProjects: projects.length,
-                inProgress: projects.filter(p => p.status === 'In Progress').length,
-                totalEstimatedDays: projects.reduce((sum, p) => sum + (p.estimatedDays || 0), 0),
-                totalActualCost: projects.reduce((sum, p) => sum + ((p.actualDays || 0) * (p.myPerDayCost || 0)), 0),
-            };
+        // --- EFFORT CRUD ---
 
-            const cards = [
-                { title: 'Total Projects', value: summary.totalProjects, icon: 'list-checks', color: 'text-primary' },
-                { title: 'In Progress', value: summary.inProgress, icon: 'rotate-cw', color: 'text-yellow-400' },
-                { title: 'Total Est. Days', value: summary.totalEstimatedDays.toLocaleString(), icon: 'calendar-days', color: 'text-indigo-400' },
-                { title: 'Total Actual Cost', value: formatCurrency(summary.totalActualCost), icon: 'trending-up', color: 'text-green-400' },
-            ];
-
-            dashboardSummary.innerHTML = cards.map(card => `
-                <div class="bg-card p-5 rounded-xl shadow-lg border border-gray-800 flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-400">${card.title}</p>
-                        <p class="text-3xl font-bold ${card.color} mt-1">${card.value}</p>
-                    </div>
-                    <i data-lucide="${card.icon}" class="w-8 h-8 ${card.color} opacity-40"></i>
-                </div>
-            `).join('');
-
-            lucide.createIcons();
-        };
-
-        /** Renders all projects and updates the dashboard. */
-        const renderProjects = () => {
-            projectListContainer.innerHTML = '';
+        window.openEffortModal = (projectId, effortId = null) => {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
             
-            if (projects.length === 0) {
-                emptyState.classList.remove('hidden');
+            const modal = document.getElementById('effort-modal');
+            const title = document.getElementById('effort-modal-title');
+            const projectIdInput = document.getElementById('effort-project-id');
+            const effortIdInput = document.getElementById('effort-id-input');
+            const descriptionInput = document.getElementById('effort-description');
+            const hoursInput = document.getElementById('effort-hours');
+            const costInput = document.getElementById('effort-cost');
+            const dateInput = document.getElementById('effort-date');
+
+            projectIdInput.value = projectId;
+
+            if (effortId) {
+                const effort = project.effort.find(e => e.id === effortId);
+                if (!effort) return;
+                title.textContent = `Edit Effort for ${project.name}`;
+                effortIdInput.value = effortId;
+                descriptionInput.value = effort.description;
+                hoursInput.value = effort.hours.toFixed(1);
+                costInput.value = effort.costPerHour.toFixed(2);
+                dateInput.value = new Date(effort.timestamp).toISOString().split('T')[0];
             } else {
-                emptyState.classList.add('hidden');
-                // Sort by creation date (optional, since there is no orderBy in query)
-                const sortedProjects = projects.slice().sort((a, b) => {
-                    // Use a fallback for objects (like serverTimestamp) that haven't resolved yet
-                    const dateA = a.createdAt?.seconds || 0;
-                    const dateB = b.createdAt?.seconds || 0;
-                    return dateB - dateA;
-                });
-
-                sortedProjects.forEach(project => {
-                    projectListContainer.appendChild(createProjectCard(project));
-                });
+                title.textContent = `Log New Effort for ${project.name}`;
+                effortIdInput.value = '';
+                descriptionInput.value = '';
+                hoursInput.value = 1;
+                costInput.value = project.budget > 0 ? (project.budget / 100).toFixed(2) : 50;
+                dateInput.value = new Date().toISOString().split('T')[0];
             }
-            renderDashboardSummary(projects);
+            
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        };
+        
+        document.getElementById('effort-form').onsubmit = async (e) => {
+            e.preventDefault();
+            if (!db || !userId) return;
+
+            window.showLoading(true);
+            const projectId = document.getElementById('effort-project-id').value;
+            const effortId = document.getElementById('effort-id-input').value;
+            const description = document.getElementById('effort-description').value;
+            const hours = parseFloat(document.getElementById('effort-hours').value);
+            const costPerHour = parseFloat(document.getElementById('effort-cost').value);
+            const timestamp = new Date(document.getElementById('effort-date').value).getTime();
+
+            const project = projects.find(p => p.id === projectId);
+            if (!project) { window.showLoading(false); return; }
+
+            const effortEntry = {
+                description,
+                hours,
+                costPerHour,
+                timestamp,
+                id: effortId || Date.now() 
+            };
+
+            let updatedEffort;
+            if (effortId) {
+                // Update existing effort
+                updatedEffort = project.effort.map(e => e.id == effortId ? effortEntry : e);
+            } else {
+                // Add new effort
+                updatedEffort = [...project.effort, effortEntry];
+            }
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const docRef = doc(db, 'artifacts', appId, 'users', userId, 'projects', projectId);
+
+            try {
+                await updateDoc(docRef, { effort: updatedEffort });
+                window.closeModal('effort-modal');
+            } catch (e) {
+                console.error("Error saving effort:", e);
+                alert('Failed to save effort. Check console for details.');
+            } finally {
+                window.showLoading(false);
+            }
+        };
+        
+        window.handleDeleteEffort = async (projectId, effortId) => {
+            if (!db || !userId) return;
+
+            if (confirm("Are you sure you want to delete this effort log?")) {
+                const project = projects.find(p => p.id === projectId);
+                if (!project) return;
+                
+                window.showLoading(true);
+                const updatedEffort = project.effort.filter(e => e.id != effortId);
+
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const docRef = doc(db, 'artifacts', appId, 'users', userId, 'projects', projectId);
+
+                try {
+                    await updateDoc(docRef, { effort: updatedEffort });
+                } catch (e) {
+                    console.error("Error deleting effort:", e);
+                    alert('Failed to delete effort. Check console for details.');
+                } finally {
+                    window.showLoading(false);
+                }
+            }
+        };
+        
+        // --- UI LOGIC ---
+
+        window.toggleProjectExpansion = (projectId) => {
+            const card = document.getElementById(`card-${projectId}`);
+            const log = document.getElementById(`effort-log-${projectId}`);
+            const isExpanded = card.getAttribute('data-expanded') === 'true';
+            
+            if (isExpanded) {
+                log.classList.add('hidden');
+                card.setAttribute('data-expanded', 'false');
+            } else {
+                log.classList.remove('hidden');
+                card.setAttribute('data-expanded', 'true');
+            }
+            lucide.createIcons();
         };
 
-        // --- Initialization and Event Listeners ---
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Initial Firebase setup
-            firebaseInit();
-            
-            // 2. Set up Modals and Form Logic
-            const projectModal = document.getElementById('project-modal');
+        // --- EVENT LISTENERS ---
+        window.onload = () => {
+            initAppAndAuth();
+            document.getElementById('open-project-modal-btn').onclick = () => openProjectModal();
+        };
 
-            document.getElementById('add-project-btn').addEventListener('click', () => openModal());
-            
-            document.getElementById('close-modal-btn').addEventListener('click', () => projectModal.style.display = 'none');
-            document.getElementById('project-form').addEventListener('submit', saveProject);
-            
-            // Close delete modal
-            document.getElementById('cancel-delete-btn').addEventListener('click', () => document.getElementById('delete-modal').style.display = 'none');
-            // Confirm delete
-            document.getElementById('confirm-delete-btn').addEventListener('click', deleteProject);
-
-            // Handle Clicks on project cards (Edit/Delete delegation)
-            projectListContainer.addEventListener('click', (e) => {
-                const button = e.target.closest('.edit-btn') || e.target.closest('.delete-btn');
-                if (!button) return;
-
-                const projectId = button.dataset.id;
-                const project = projects.find(p => p.id === projectId);
-
-                if (button.classList.contains('edit-btn')) {
-                    if (project) openModal(project);
-                } else if (button.classList.contains('delete-btn')) {
-                    if (project) initiateDelete(projectId, project.name);
-                }
-            });
-
-            // 3. Initial Icon Render
-            lucide.createIcons();
-        });
     </script>
 </body>
 </html>
