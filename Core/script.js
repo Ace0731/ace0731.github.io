@@ -110,25 +110,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Function to update navbar background
+// Function to update navbar appearance on scroll
 function updateNavbarBackground() {
     const navbar = document.querySelector('.navbar');
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-
     if (window.scrollY > 50) {
-        if (currentTheme === 'dark') {
-            navbar.style.background = 'rgba(31, 41, 55, 0.98)';
-        } else {
-            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        }
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        navbar.classList.add('navbar-scrolled');
     } else {
-        if (currentTheme === 'dark') {
-            navbar.style.background = 'rgba(31, 41, 55, 0.95)';
-        } else {
-            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        }
-        navbar.style.boxShadow = 'none';
+        navbar.classList.remove('navbar-scrolled');
     }
 }
 
@@ -539,5 +527,5 @@ function getTimelineLabelWithDuration(startYear, startMonth) {
     return `${startDateStr} - Present ${durationText}`;
 }
 
-const timelineText = getTimelineLabelWithDuration(2025, 3); //Start Month,year
+const timelineText = getTimelineLabelWithDuration(2024, 5); //Start Month,year
 document.querySelector('.timeline-date').textContent = timelineText;
