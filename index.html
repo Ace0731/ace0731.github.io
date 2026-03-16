@@ -1,762 +1,678 @@
-<!DOCTYPE html>
-<html lang="en">
+<html class="scroll-smooth" lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <meta name="theme-color" content="#3B82F6">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>Anand Kushwaha - Full Stack Developer</title>
-  <link rel="stylesheet" href="Core/styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
-  <link rel="manifest" href="icons/site.webmanifest">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JGDYQ1Y9YQ"></script>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Portfolio | Full Stack Developer</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Tailwind CSS v3 -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-JGDYQ1Y9YQ');
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: {
+              900: '#064e3b',
+              950: '#042f24',
+            },
+            navy: {
+              400: '#3b82f6',
+              900: '#1e3a8a',
+              950: '#172554',
+            },
+            slate: {
+              950: '#0f172a',
+            }
+          },
+          fontFamily: {
+            sans: ['Space Grotesk', 'sans-serif'],
+          },
+          borderRadius: {
+            'xl': '12px',
+          },
+        },
+      },
+    }
   </script>
+  <!-- BEGIN: Global Styles -->
+  <style data-purpose="custom-layout">
+    body {
+      background-color: #f8fafc;
+      /* Slate-50 */
+      color: #64748b;
+      /* Slate-500 for paragraphs */
+      font-family: 'Space Grotesk', sans-serif;
+    }
 
+    h1,
+    h2,
+    h3,
+    h4,
+    .text-slate-950 {
+      color: #0f172a;
+      /* Slate-900 for headings */
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #059669, #1e3a8a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-bg-hero {
+      background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent),
+        radial-gradient(circle at bottom left, rgba(30, 58, 138, 0.05), transparent);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 10px;
+    }
+  </style>
+  <!-- END: Global Styles -->
 </head>
-<style>
-  /* Skill bar container */
-  .skill-bar {
-    width: 100%;
-    height: 8px;
-    background: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 6px;
-  }
 
-  /* Skill progress */
-  .skill-progress {
-    width: 0;
-    /* Start from 0 for animation */
-    height: 100%;
-    background: linear-gradient(90deg, #10B981, #3B82F6);
-    /* Green → Blue */
-    border-radius: 4px;
-    transition: width 1s ease-in-out;
-    /* Smooth animation */
-  }
-
-  /* Optional styling for category */
-  .skills-category {
-    margin-bottom: 30px;
-  }
-
-  .category-title {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 15px;
-  }
-
-  .skill-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    margin-bottom: 4px;
-  }
-</style>
-
-<body>
-  <header class="navbar">
-    <div class="nav-container">
-      <div class="nav-logo">
-        <a href="index.html" class="logo-text">Ace</a>
+<body class="custom-scrollbar overflow-x-hidden selection:bg-emerald-500/30">
+  <!-- BEGIN: Navigation -->
+  <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl" data-purpose="floating-navbar">
+    <div class="glass-card rounded-2xl px-6 py-4 flex items-center justify-between shadow-sm">
+      <div class="text-xl font-bold tracking-tighter text-slate-950">
+        <span class="text-emerald-600">DEV</span>ELOPER
       </div>
-
-
-      <!-- Hamburger Menu -->
-      <div id="nav-toggle" class="nav-toggle">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-
+      <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <a class="text-slate-600 hover:text-emerald-600 transition-colors" href="#hero">Home</a>
+        <a class="text-slate-600 hover:text-emerald-600 transition-colors" href="#about">About</a>
+        <a class="text-slate-600 hover:text-emerald-600 transition-colors" href="#projects">Projects</a>
+        <a class="px-5 py-2 bg-emerald-900 text-white border border-emerald-500/30 rounded-xl hover:bg-emerald-800 transition-all"
+          href="#contact">Let's Talk</a>
       </div>
-
-      <!-- Navigation Menu -->
-      <nav id="nav-menu" class="nav-menu" ">
-        <a href=" #home" class="nav-link">Home</a>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#skills" class="nav-link">Skills</a>
-        <a href="#projects" class="nav-link">Projects</a>
-        <a href="#experience" class="nav-link">Experience</a>
-        <a href="Pages/Contact.html" class="nav-link">Contact</a>
-        <button id="theme-toggle" class="theme-toggle">
-          <i class="fas fa-moon"></i>
-        </button>
-      </nav>
+      <!-- Mobile Menu Placeholder (Visual only) -->
+      <button class="md:hidden p-2 text-slate-900">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
     </div>
-  </header>
-
-
-
-  <!-- Hero Section -->
-  <section id="home" class="hero">
-    <div class="hero-container">
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">
-            Hi, I'm <span class="highlight">Anand Kushwaha</span>
-          </h1>
-          <h2 class="hero-subtitle">Full Stack Developer</h2>
-          <p class="hero-description">
-            Passionate about creating innovative web solutions and mobile applications.
-            Specialized in .NET technologies, Flutter, and modern web development.
-          </p>
-          <div class="hero-buttons">
-            <a href="#projects" class="btn btn-primary">View My Work</a>
-            <a href="Pages/Contact.html" class="btn btn-secondary">Get In Touch</a>
-          </div>
+  </nav>
+  <!-- END: Navigation -->
+  <!-- BEGIN: Hero Section -->
+  <section class="min-h-screen flex items-center justify-center pt-20 gradient-bg-hero px-6" id="hero">
+    <div class="max-w-6xl mx-auto text-center">
+      <!-- Animated Badge --><br>
+      <div
+        class="inline-flex items-center px-4 py-2 rounded-full glass-card text-emerald-700 text-sm font-medium mb-8 border border-emerald-500/10 animate-pulse">
+        <span class="relative flex h-2 w-2 mr-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        Available for new opportunities
+      </div>
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 leading-tight text-slate-950">
+        Full Stack Developer | Building <br />
+        <span class="gradient-text">Scalable Modern</span> Applications
+      </h1>
+      <p class="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        Specializing in crafting premium digital experiences through robust backend architectures and sleek, responsive
+        frontend interfaces.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a class="w-full sm:w-auto px-8 py-4 bg-emerald-900 hover:bg-emerald-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-900/10"
+          href="#projects">
+          View Projects
+        </a>
+        <a class="w-full sm:w-auto px-8 py-4 glass-card hover:bg-white text-slate-950 font-semibold rounded-xl transition-all border border-slate-200"
+          href="#contact">
+          Contact Me
+        </a>
+      </div>
+    </div>
+  </section>
+  <!-- END: Hero Section -->
+  <!-- BEGIN: About Section -->
+  <section class="py-24 px-6 bg-white relative overflow-hidden" id="about">
+    <!-- Subtle Background Pattern -->
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+      style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 40px 40px;"></div>
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+      <div class="relative group">
+        <div
+          class="absolute -inset-4 bg-gradient-to-r from-emerald-500 to-navy-500 rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity blur-xl">
         </div>
-        <div class="hero-image">
-          <div class="profile-card">
-            <div class="profile-avatar">
-              <img style="width: 300px; height: 300px; border-radius: 50%;" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/profile.jpg
-"></i>
-            </div>
-            <div class="floating-elements">
-              <div class="floating-element" style="--delay: 0s;">
-                <i class="fab fa-js-square"></i>
-              </div>
-              <div class="floating-element" style="--delay: 0.5s;">
-                <i class="fab fa-react"></i>
-              </div>
-              <div class="floating-element" style="--delay: 1s;">
-                <i class="fas fa-database"></i>
-              </div>
-              <div class="floating-element" style="--delay: 1.5s;">
-                <i class="fab fa-python"></i>
-              </div>
-              <div class="floating-element" style="--delay: 2s;">
-                <i class="fab fa-microsoft"></i>
-              </div>
-              <div class="floating-element" style="--delay: 2.5s;">
-                <i class="fab fa-flutter"></i>
-              </div>
-            </div>
+        <img alt="Developer"
+          class="relative rounded-2xl object-cover w-full h-[500px] border border-slate-100 shadow-xl"
+          src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/1769882951010.jpg" />
+      </div>
+      <div>
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-slate-950">Expertise Driven by <br /><span
+            class="text-emerald-600">Passion &amp; Precision</span></h2>
+        <p class="text-slate-500 leading-relaxed mb-6 text-lg">
+          With over 1.5 years of experience in the software industry, I focus on building high-performance applications
+          that solve complex business problems. My approach combines technical excellence with a deep understanding of
+          user experience.
+        </p>
+        <p class="text-slate-500 leading-relaxed mb-8 text-lg">
+          I thrive in environments that challenge the status quo and require innovative thinking. From microservices to
+          intuitive UI designs, I cover the entire development lifecycle.
+        </p>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="glass-card p-4 rounded-xl border-slate-100 bg-slate-50/50">
+            <div class="text-emerald-600 text-2xl font-bold">5+</div>
+            <div class="text-slate-500 text-sm">Projects Delivered</div>
+          </div>
+          <div class="glass-card p-4 rounded-xl border-slate-100 bg-slate-50/50">
+            <div class="text-navy-900 text-2xl font-bold">100%</div>
+            <div class="text-slate-500 text-sm">Client Satisfaction</div>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- About Section -->
-  <section id="about" class="about">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">About Me</h2>
-        <p class="section-subtitle">Get to know me better</p>
+  <!-- END: About Section -->
+  <!-- BEGIN: Tech Stack -->
+  <section class="py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold mb-4 text-slate-950">The Power House</h2>
+        <p class="text-slate-500">My preferred technologies for building world-class software</p>
       </div>
-      <div class="about-content">
-        <div class="about-text">
-          <p>
-            Dynamic Full Stack Developer and Project Coordinator with a proven track record of delivering
-            high-impact digital solutions. I specialize in bridging the gap between stakeholder requirements
-            and technical execution, resulting in <strong>15% reduced development delays</strong> and
-            higher client satisfaction.
-          </p>
-          <div class="about-stats">
-            <div class="stat-item">
-              <div class="stat-number">8+</div>
-              <div class="stat-label">Projects Delivered</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">5-7</div>
-              <div class="stat-label">Concurrent Projects Managed</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-number">10%</div>
-              <div class="stat-label">Faster Delivery Rate</div>
-            </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
+        <!-- Tech Icon Card -->
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:flutter" width="100%" height="100%"></iconify-icon>
           </div>
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">Flutter</span>
         </div>
-        <div class="about-details">
-          <div class="detail-card">
-            <i class="fas fa-graduation-cap"></i>
-            <h3>Education</h3>
-            <p>Bachelor of Computer Applications<br>SJ Mahavidyalaya (2022-2025)<br>CGPA: 8.04</p>
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:react" width="100%" height="100%"></iconify-icon>
           </div>
-          <div class="detail-card">
-            <i class="fas fa-map-marker-alt"></i>
-            <h3>Location</h3>
-            <p>Kanpur Nagar<br>Uttar Pradesh, India</p>
-          </div>
-          <div class="detail-card">
-            <i class="fas fa-envelope"></i>
-            <h3>Contact</h3>
-            <p>ak9305059300.001@gmail.com<br>(+91) 9305059300</p>
-          </div>
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">React</span>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Skills Section -->
-  <section id="skills" class="skills">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Skills & Expertise</h2>
-        <p class="section-subtitle">Technologies I work with</p>
-      </div>
-      <div class="skills-content">
-        <div class="skills-category">
-          <h3 class="category-title">Frontend Development</h3>
-          <div class="skill-items">
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">HTML5 & CSS3</span>
-                <span class="skill-percentage">90%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="90%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">JavaScript</span>
-                <span class="skill-percentage">85%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="85%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">ASP.NET MVC (Razor)</span>
-                <span class="skill-percentage">88%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="88%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">Flutter</span>
-                <span class="skill-percentage">85%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="85%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">PHP-Blade</span>
-                <span class="skill-percentage">85%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="85%"></div>
-              </div>
-            </div>
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:laravel" width="100%" height="100%"></iconify-icon>
           </div>
-          <div class="soft-skills">
-            <h3 class="category-title">Soft Skills</h3>
-            <div class="soft-skill-tags">
-              <span class="skill-tag">Communication</span>
-              <span class="skill-tag">Problem Solving</span>
-              <span class="skill-tag">Team Collaboration</span>
-              <span class="skill-tag">Leadership</span>
-              <span class="skill-tag">Time Management</span>
-              <span class="skill-tag">Adaptability</span>
-              <span class="skill-tag">Attention to Detail</span>
-              <span class="skill-tag">Positive Thinking</span>
-            </div>
-          </div>
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">Laravel</span>
         </div>
-
-
-        <div class="skills-category">
-          <h3 class="category-title">Backend Development</h3>
-          <div class="skill-items">
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">C# & .NET Framework</span>
-                <span class="skill-percentage">92%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="92%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">Entity Framework</span>
-                <span class="skill-percentage">86%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="86%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">RESTful APIs</span>
-                <span class="skill-percentage">88%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="88%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">MySQL</span>
-                <span class="skill-percentage">84%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="84%"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="skill-info">
-                <span class="skill-name">PHP-Laravel</span>
-                <span class="skill-percentage">80%</span>
-              </div>
-              <div class="skill-bar">
-                <div class="skill-progress" data-width="84%"></div>
-              </div>
-            </div>
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:php" width="100%" height="100%"></iconify-icon>
           </div>
-          <div class="skills-category">
-            <h3 class="category-title">Project Management & Tools</h3>
-            <div class="skill-items">
-              <div class="skill-item">
-                <div class="skill-info">
-                  <span class="skill-name">Agile Scrum & Sprint Planning</span>
-                  <span class="skill-percentage">90%</span>
-                </div>
-                <div class="skill-bar">
-                  <div class="skill-progress" data-width="90%"></div>
-                </div>
-              </div>
-              <div class="skill-item">
-                <div class="skill-info">
-                  <span class="skill-name">Jira & Project Tracking</span>
-                  <span class="skill-percentage">85%</span>
-                </div>
-                <div class="skill-bar">
-                  <div class="skill-progress" data-width="85%"></div>
-                </div>
-              </div>
-              <div class="skill-item">
-                <div class="skill-info">
-                  <span class="skill-name">Requirement Gathering (BRD/SRS)</span>
-                  <span class="skill-percentage">92%</span>
-                </div>
-                <div class="skill-bar">
-                  <div class="skill-progress" data-width="92%"></div>
-                </div>
-              </div>
-              <div class="skill-item">
-                <div class="skill-info">
-                  <span class="skill-name">Stakeholder Communication</span>
-                  <span class="skill-percentage">88%</span>
-                </div>
-                <div class="skill-bar">
-                  <div class="skill-progress" data-width="88%"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">PHP</span>
         </div>
-      </div>
-  </section>
-
-  <!-- Projects Section -->
-  <section id="projects" class="projects">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Featured Projects</h2>
-        <p class="section-subtitle">Some of my recent work</p>
-      </div>
-      <div class="projects-grid">
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/InnoTend.webp
-" alt="InnoTend"></img>
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:mysql" width="100%" height="100%"></iconify-icon>
           </div>
-          <div class="project-content">
-            <h3 class="project-title">Innotend</h3>
-            <p class="project-description">
-              Cross-platform mobile app for employee attendance for 'Innovaneers Technologies' with Flutter frontend
-              and .NET Web API backend with automatic attendance marking.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">Flutter</span>
-              <span class="tech-tag">Dart</span>
-              <span class="tech-tag">.NET Web API</span>
-              <span class="tech-tag">MySQL</span>
-            </div>
-            <div class="project-links">
-              <a href="#" class="project-link" onclick="showPopup(event, 'popupModalApp')">
-                <i class="fas fa-external-link-alt"></i> View Project
-              </a>
-              <a href="#" class="project-link">
-                <i class="fas fa-external-link-alt"></i>
-                Play Store
-              </a>
-            </div>
-          </div>
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">MySQL</span>
         </div>
-
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/KDO_Onboard.webp
-" alt="KDO_Onboard"></img>
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:javascript" width="100%" height="100%"></iconify-icon>
           </div>
-          <div class="project-content">
-            <h3 class="project-title">KDO Onboard App</h3>
-            <p class="project-description">
-              Staff onboarding mobile application for Kholo Dukan Online (Atomas Power Pvt Ltd),
-              built with Flutter for seamless onboarding workflows and real-time status tracking.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">Flutter</span>
-              <span class="tech-tag">Dart</span>
-
-              <span class="tech-tag">.NET Web API</span>
-              <span class="tech-tag">MySQL</span>
-            </div>
-            <div class="project-links">
-              <a href="#" class="project-link" onclick="showPopup(event, 'popupModalApp')">
-                <i class="fas fa-external-link-alt"></i> View Project
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=com.innovaneers.atomassstaff&pcampaignid=web_share"
-                class="project-link">
-                <i class="fas fa-external-link-alt"></i>
-                Play Store
-              </a>
-            </div>
-          </div>
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">JavaScript</span>
         </div>
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Orgomik_logo.jpg"
-              alt="Orgomik Meeting App">
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:html-5" width="100%" height="100%"></iconify-icon>
           </div>
-          <div class="project-content">
-            <h3 class="project-title">Orgomik Meeting App</h3>
-            <p class="project-description">
-              A comprehensive meeting management platform designed to streamline corporate collaborations.
-              Features include real-time scheduling, automated reminders, and a dedicated <strong>Admin Panel</strong>
-              for seamless control and data management.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">Flutter (Mobile)</span>
-              <span class="tech-tag">Node.js</span>
-              <span class="tech-tag">MySQL</span>
-              <span class="tech-tag">Admin Panel</span>
-            </div>
-            <div class="project-links">
-              <a href="#" class="project-link">
-                <i class="fas fa-external-link-alt"></i> View Project
-              </a>
-            </div>
-          </div>
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">HTML5</span>
         </div>
-
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/company_logo.png"
-              alt="Shree Pipes CRM">
+        <div
+          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
+          <div class="w-10 h-10 mb-3">
+            <iconify-icon icon="logos:git-icon" width="100%" height="100%"></iconify-icon>
           </div>
-          <div class="project-content">
-            <h3 class="project-title">Shree Pipes CRM</h3>
-            <p class="project-description">
-              Industrial-grade Customer Relationship Management system built specifically for the manufacturing
-              sector. Automates lead tracking, customer interactions, and sales pipelines, significantly
-              enhancing administrative efficiency and data-driven decision making.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">Flutter (Web)</span>
-              <span class="tech-tag">Plain PHP APIs</span>
-              <span class="tech-tag">MySQL</span>
-            </div>
-            <div class="project-links">
-              <a href="#" class="project-link">
-                <i class="fas fa-external-link-alt"></i> View Project
-              </a>
-            </div>
-          </div>
+          <span
+            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">Git</span>
         </div>
-
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1973&auto=format&fit=crop"
-              alt="SKKD Real Estate">
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">SKKD - Real Estate</h3>
-            <p class="project-description">
-              End-to-end real estate management portal delivered with extreme precision.
-              Successfully managed the entire development lifecycle with <strong>minimal rework
-                (less than 5 hours requested)</strong> through proactive requirement gathering
-              and robust architecture.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">Flutter</span>
-              <span class="tech-tag">ASP.NET</span>
-              <span class="tech-tag">SQL Server</span>
-            </div>
-            <div class="project-links">
-              <a href="#" class="project-link">
-                <i class="fas fa-external-link-alt"></i> View Project
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Tutor_Connect.webp"
-              alt="Tutor Connect Website">
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">Tutor Connect Website</h3>
-            <p class="project-description">
-              A high-impact web platform connecting tutors with students.
-              <strong>Delivered the entire project solo</strong>, showcasing full ownership from
-              conceptual design to deployment, including tutor profiles, subject-wise search,
-              and secure booking systems.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">React.js</span>
-              <span class="tech-tag">Node.js</span>
-              <span class="tech-tag">Typescript</span>
-              <span class="tech-tag">Firebase</span>
-            </div>
-            <div class="project-links">
-              <a href="https://thesahilsirstutorials.in/" target="_blank" class="project-link">
-                <i class="fas fa-external-link-alt"></i> Live Website
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/amit_polyseats.png"
-              alt="Amit Polyseats Inventory Management System">
-          </div>
-
-          <div class="project-content">
-            <h3 class="project-title">Amit Polyseats Inventory Management System</h3>
-            <p class="project-description">
-              A custom-built inventory and production management web software designed for Amit Polyseats.
-              It manages item groups, production tracking, dispatch modules, and vendor onboarding.
-              Built with C# ASP.NET MVC, Entity Framework, MySQL, and Bootstrap, it streamlines
-              manufacturing operations and improves workflow efficiency.
-            </p>
-
-            <div class="project-tech">
-              <span class="tech-tag">C#</span>
-              <span class="tech-tag">ASP.NET MVC</span>
-              <span class="tech-tag">Entity Framework</span>
-              <span class="tech-tag">MySQL</span>
-              <span class="tech-tag">Bootstrap</span>
-            </div>
-
-            <div class="project-links">
-              <a href="#" class="project-link" onclick="showPopup(event, 'popupModalAmitPolyseats')">
-                <i class="fas fa-external-link-alt"></i> View Project
-              </a>
-
-              <!-- No live link since internal software -->
-            </div>
-          </div>
-        </div>
-
-        <div class="project-card">
-          <div class="project-image">
-            <img src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/KidsCanvas.png"
-              alt="KidsCanvas School Website">
-          </div>
-          <div class="project-content">
-            <h3 class="project-title">KidsCanvas School Website</h3>
-            <p class="project-description">
-              A dynamic and responsive school website designed for <strong>KidsCanvas</strong>,
-              built using <strong>Laravel</strong> and integrated with <strong>MySQL</strong> for
-              backend management. It includes modules for event galleries, admissions, notices, and
-              a fully functional admin dashboard with file uploads and database-driven content.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">PHP</span>
-              <span class="tech-tag">Laravel</span>
-              <span class="tech-tag">MySQL</span>
-              <span class="tech-tag">Blade</span>
-              <span class="tech-tag">JavaScript</span>
-              <span class="tech-tag">Bootstrap</span>
-            </div>
-            <div class="project-links">
-              <a href="#" class="project-link" onclick="showPopup(event, 'popupModalKidsCanvas')">
-                <i class="fas fa-external-link-alt"></i> View Project
-              </a>
-              <a href="https://kidscanvas.thesahilsirstutorials.in/" target="_blank" class="project-link">
-                <i class="fas fa-external-link-alt"></i> Live Website
-              </a>
-            </div>
-          </div>
-        </div>
-
-
       </div>
     </div>
   </section>
-
-
-  <!-- Experience Section -->
-  <section id="experience" class="experience">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Work Experience</h2>
-        <p class="section-subtitle">My professional journey</p>
-        <div style="margin-top: 20px;">
-          <a href="https://drive.google.com/file/d/1MtA7nxUcm0zNd_aHHyupxV4vV6LVYalE/view?usp=sharing" target="_blank"
-            class="btn btn-primary">
-            <i class="fas fa-file-download"></i> Download Resume
+  <!-- END: Tech Stack -->
+  <!-- BEGIN: Projects Section -->
+  <section class="py-24 px-6 bg-slate-50" id="projects">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
+        <div>
+          <h2 class="text-3xl font-bold mb-4 text-slate-950">Featured Projects</h2>
+          <p class="text-slate-500">Selected work that defines my engineering standards.</p>
+        </div>
+        <div class="mt-4 md:mt-0">
+          <a class="text-emerald-600 font-semibold hover:underline flex items-center gap-2" href="#">
+            View All Projects
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
           </a>
         </div>
       </div>
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-dot"></div>
-          <div class="timeline-content">
-            <div class="timeline-date">May 2024 - Present</div>
-            <h3 class="timeline-title">Project Coordinator & Full Stack Developer</h3>
-            <h4 class="timeline-company">Innovaneers Technology, Kanpur</h4>
-            <ul class="timeline-description">
-              <li><strong>Led development</strong> of multiple cross-platform attendance apps with real-time validation,
-                <strong>beating timelines by 10%</strong>.
-              </li>
-              <li><strong>Successfully managed 5-7 concurrent projects</strong>, ensuring seamless coordination between
-                stakeholders and developers.</li>
-              <li><strong>Engineered</strong> KDO Onboard, a high-security staff onboarding app in Flutter integrated
-                with .NET APIs.</li>
-              <li><strong>Optimized</strong> database architectures and RESTful APIs using Entity Framework and MySQL
-                for scalable enterprise solutions.</li>
-              <li><strong>Streamlined</strong> business operations by delivering 8+ key application modules with zero
-                critical bugs.</li>
-            </ul>
-            <div class="timeline-tech">
-              <span class="tech-tag">ASP.NET MVC</span>
-              <span class="tech-tag">C#</span>
-              <span class="tech-tag">Flutter</span>
-              <span class="tech-tag">MySQL</span>
-              <span class="tech-tag">Entity Framework</span>
-              <span class="tech-tag">REST API</span>
-              <span class="tech-tag">SEO</span>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- InnoTend -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="InnoTend" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/InnoTend.webp" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">InnoTend</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Cross-platform mobile app for employee attendance with Flutter frontend and .NET Web API backend with automatic attendance marking.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Dart</span>
+              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">.NET Web API</span>
             </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#" onclick="showPopup(event, 'popupModalApp')">
+                <span>View Project</span>
+              </a>
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#">
+                <span>Play Store</span>
+              </a>
+            </div>
+          </div>
+        </article>
 
+        <!-- KDO Onboard App -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="KDO Onboard" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/KDO_Onboard.webp" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">KDO Onboard App</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Staff onboarding mobile application for Kholo Dukan Online, built with Flutter for seamless workflows and real-time status tracking.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Dart</span>
+              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">.NET Web API</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#" onclick="showPopup(event, 'popupModalApp')">
+                <span>View Project</span>
+              </a>
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="https://play.google.com/store/apps/details?id=com.innovaneers.atomassstaff">
+                <span>Play Store</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Orgomik Meeting App -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="Orgomik" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Orgomik_logo.jpg" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">Orgomik Meeting App</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">A meeting management platform streamline collaborations with real-time scheduling and full control.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Node.js</span>
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#">
+                <span>View Project</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Shree Pipes CRM -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="Shree Pipes" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/company_logo.png" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">Shree Pipes CRM</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Industrial CRM system for manufacturing with full lead tracking and sales pipeline automation.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter (Web)</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">PHP APIs</span>
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#">
+                <span>View Project</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tutor Connect -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="Tutor Connect" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Tutor_Connect.webp" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">Tutor Connect Website</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Connecting tutors with students showcasing full conceptual design to deployment solo.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">React.js</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Node.js</span>
+              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">Firebase</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="https://thesahilsirstutorials.in/" target="_blank">
+                <span>Live Website</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- KidsCanvas -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="KidsCanvas" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Kidscanvas.png" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">KidsCanvas Website</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Dynamic and responsive school website designed using Laravel & MySQL backend management.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Laravel</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">MySQL</span>
+              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">JavaScript</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#" onclick="showPopup(event, 'popupModalKidsCanvas')">
+                <span>View Project</span>
+              </a>
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="https://www.kidscanvasschool.co.in/" target="_blank">
+                <span>Live</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Bilty Web Software -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="Bilty Web Software" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Bilty.png" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">Bilty Web Software</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Logistics & Builty Management System that digitizes manual paperwork for transport operators.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Laravel</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">PHP</span>
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
+              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">REST APIs</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#">
+                <span>View Project</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- MService -->
+        <article class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
+          <div class="relative h-56 overflow-hidden">
+            <img alt="MService" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Mservice.png" />
+            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold mb-3 text-slate-950">MService</h3>
+            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Full-stack mobile repair platform consisting of Customer and Technician apps with a web-based admin panel.</p>
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Laravel</span>
+              <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">PHP</span>
+              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium" href="#">
+                <span>View Project</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+  <!-- END: Projects Section -->
+  <!-- BEGIN: Experience Section -->
+  <section class="py-24 px-6 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold mb-16 text-center text-slate-950">Professional Timeline</h2>
+      <<div
+        class="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-emerald-500/20 before:via-navy-500/20 before:to-transparent">
+        <!-- Timeline Item 1 -->
+        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+          <div
+            class="flex items-center justify-center w-10 h-10 rounded-full border border-emerald-500/30 bg-white text-emerald-600 shadow-sm z-10 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+            <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20">
+              <path clip-rule="evenodd"
+                d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011-1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
+                fill-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div
+            class="w-[calc(100%-4rem)] md:w-[45%] p-6 rounded-2xl glass-card border-l-4 border-l-emerald-600 bg-white shadow-sm">
+            <time class="text-emerald-600 text-sm font-bold block mb-1">OCT 2024 — JAN 2026</time>
+            <h4 class="text-xl font-bold text-slate-950">Full Stack Developer</h4>
+            <div class="text-slate-500 text-sm mb-4">Innovaneers Technologies</div>
+            <p class="text-slate-500 text-sm">Promoted to develop core platform features, optimize database performance,
+              and build scalable REST APIs after a successful internship.</p>
+          </div>
+        </div>
+        <!-- Timeline Item 2 -->
+        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+          <div
+            class="flex items-center justify-center w-10 h-10 rounded-full border border-navy-500/30 bg-white text-navy-900 shadow-sm z-10 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+            <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20">
+              <path
+                d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z">
+              </path>
+            </svg>
+          </div>
+          <div
+            class="w-[calc(100%-4rem)] md:w-[45%] p-6 rounded-2xl glass-card border-l-4 border-l-navy-900 bg-white shadow-sm">
+            <time class="text-navy-900 text-sm font-bold block mb-1">MAY 2024 — OCT 2024</time>
+            <h4 class="text-xl font-bold text-slate-950">Intern Full Stack Developer</h4>
+            <div class="text-slate-500 text-sm mb-4">Innovaneers Technologies</div>
+            <p class="text-slate-500 text-sm">Created responsive UI components, supported back-end services, and
+              participated in agile sprints during a 6-month specialized internship program.</p>
+          </div>
+        </div>
+    </div>div>
+    </div>
+  </section>
+  <!-- END: Experience Section -->
+  <!-- BEGIN: Services Section -->
+  <section class="py-24 px-6 bg-slate-50">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold mb-4 text-slate-950">Tailored Solutions</h2>
+        <p class="text-slate-500">Everything you need to bring your vision to life.</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          class="glass-card p-8 rounded-2xl hover:bg-emerald-50/50 transition-colors group bg-white border-slate-100">
+          <div
+            class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-slate-950">Web Development</h3>
+          <p class="text-slate-500 text-sm">Dynamic web applications built with PHP & Laravel, featuring responsive UI
+            and secure architecture.</p>
+        </div>
+        <div class="glass-card p-8 rounded-2xl hover:bg-blue-50/50 transition-colors group bg-white border-slate-100">
+          <div
+            class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-navy-900 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path d="M5 12h14M5 12l4-4m-4 4l4 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+              </path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-slate-950">Backend & APIs</h3>
+          <p class="text-slate-500 text-sm">Scalable RESTful API development with Laravel, JWT Authentication, and
+            Eloquent ORM.</p>
+        </div>
+        <div
+          class="glass-card p-8 rounded-2xl hover:bg-emerald-50/50 transition-colors group bg-white border-slate-100">
+          <div
+            class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-slate-950">Mobile Apps</h3>
+          <p class="text-slate-500 text-sm">Cross-platform mobile apps for iOS and Android using Flutter with
+            GetX/Provider state management.</p>
+        </div>
+        <div class="glass-card p-8 rounded-2xl hover:bg-blue-50/50 transition-colors group bg-white border-slate-100">
+          <div
+            class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-navy-900 mb-6 group-hover:scale-110 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+              </path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-slate-950">API Integrations</h3>
+          <p class="text-slate-500 text-sm">Seamless integration of Payment Gateways, SMS Services, and Push
+            Notifications.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- END: Services Section -->
+  <!-- BEGIN: Testimonials Section -->
+  <section class="py-24 px-6 relative bg-white">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold mb-4 text-slate-950">Kind Words</h2>
+      </div>
+      <!-- Testimonial Slider Container -->
+      <div class="relative">
+        <div class="glass-card p-10 rounded-3xl border border-emerald-500/5 relative bg-slate-50/30">
+          <div class="absolute -top-6 left-10 text-emerald-500/10">
+            <svg class="w-20 h-20" fill="currentColor" viewbox="0 0 24 24">
+              <path
+                d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 7.55228 14.017 7V5C14.017 4.44772 14.4647 4 15.017 4H20.017C21.1216 4 22.017 4.89543 22.017 6V15C22.017 17.7614 19.7784 20 17.017 20H15.017C14.4647 20 14.017 20.4477 14.017 21ZM2.01697 21L2.01697 18C2.01697 16.8954 2.9124 16 4.01697 16H7.01697C7.56925 16 8.01697 15.5523 8.01697 15V9C8.01697 8.44772 7.56925 8 7.01697 8H3.01697C2.46468 8 2.01697 7.55228 2.01697 7V5C2.01697 4.44772 2.46468 4 3.01697 4H8.01697C9.12154 4 10.017 4.89543 10.017 6V15C10.017 17.7614 7.7784 20 5.01697 20H3.01697C2.46468 20 2.01697 20.4477 2.01697 21Z">
+              </path>
+            </svg>
+          </div>
+          <p class="text-xl italic text-slate-600 leading-relaxed mb-8 relative z-10">
+            "One of the most efficient developers I've ever worked with. The attention to detail in the architecture and
+            the responsiveness of the UI exceeded all our expectations."
+          </p>
+          <div class="flex items-center gap-4">
+            <img alt="Client" class="w-12 h-12 rounded-full border-2 border-emerald-500 shadow-sm"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKU4X87kcBlJR3dDNVDvH9d7RSNIebW4kWMQCMqj4g-zQNudC9oMk-34SFJBVhfSXUN9kfQ-U8juJMmbaz30Gkmm96oEztF_JbvokaXt0Xwqf-S54o318ZdRz637X8p8XyGudWDg4YEUW_lDVmVqLMX7ImuFI5qNvarO52JtyWFdn_NN6xNLB0FMycJx8jyTCMZD7L9li3mdTEBhP8MutZH264tRPThyFDuoqdQUM7jdLbUlfADIwGotM_ZMa-SnctYt1r5jskcFE" />
+            <div>
+              <div class="font-bold text-slate-950">Sarah Jenkins</div>
+              <div class="text-slate-500 text-sm">CTO, FinStream</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
-
-
-
-
-  <!-- Popup Modals -->
-  <!-- App Modal -->
-  <div id="popupModalApp" class="popup-modal">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePopup('popupModalApp')">&times;</span>
-      <h3>Private Repository</h3>
-      <p>Live on the Play Store: The app is fully accessible for hands-on experience.</p>
-      <p>The source code is privately maintained due to client confidentiality.</p>
-    </div>
-  </div>
-
-  <!-- Website Modal -->
-  <div id="popupModalWebsite" class="popup-modal">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePopup('popupModalWebsite')">&times;</span>
-      <h3>Private Repository</h3>
-      <p>The project is live and fully accessible through its website for real-time use.</p>
-      <p>The source code is privately maintained due to client confidentiality.</p>
-    </div>
-  </div>
-
-  <!-- Amit Polyseats Modal -->
-  <div id="popupModalAmitPolyseats" class="popup-modal">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePopup('popupModalAmitPolyseats')">&times;</span>
-      <h3>Amit Polyseats Inventory Management System</h3>
-      <p>
-        This is a custom-built <strong>inventory and production management software</strong>
-        created for <strong>Amit Polyseats</strong> to streamline manufacturing workflows.
-      </p>
-
-      <p>
-        <em>Note:</em> This is an internal enterprise solution. The source code and live access
-        are private due to client confidentiality.
-      </p>
-    </div>
-  </div>
-
-
-  <!-- KidsCanvas Modal -->
-  <div id="popupModalKidsCanvas" class="popup-modal">
-    <div class="popup-content">
-      <span class="close-btn" onclick="closePopup('popupModalKidsCanvas')">&times;</span>
-      <h3>KidsCanvas School Website</h3>
-      <p>
-        The <strong>KidsCanvas</strong> school website is a dynamic educational platform developed
-        using <strong>Laravel</strong>. It features:
-      </p>
-      <ul>
-        <li>Admin dashboard for managing events, galleries, and notices</li>
-        <li>Admissions inquiry and contact modules</li>
-        <li>Optimized asset handling with storage and symlink integration</li>
-        <li>Fully responsive frontend with SEO enhancements</li>
-      </ul>
-      <p><em>Note:</em> The source code is maintained privately for deployment and client data security.</p>
-    </div>
-  </div>
-
-
-
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content" style=" justify-content: center;">
-        <div class="footer-text" style=" text-align: center;">
-          <p>Made with ❤️ by <strong>Ace</strong></p>
-          <p>&copy; 2025 Anand Kushwaha. All rights reserved.</p>
+  <!-- END: Testimonials Section -->
+  <!-- BEGIN: Contact Section -->
+  <section class="py-24 px-6 bg-slate-50" id="contact">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16">
+      <div>
+        <h2 class="text-4xl font-bold mb-6 text-slate-950">Let's build something <br /><span
+            class="text-emerald-600">extraordinary</span> together.</h2>
+        <p class="text-slate-500 text-lg mb-10">
+          Currently open for freelance projects and full-time opportunities. Drop a message or find me on social media.
+        </p>
+        <div class="space-y-6">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 glass-card rounded-xl flex items-center justify-center text-emerald-600 bg-white shadow-sm border-slate-100">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm text-slate-400">Email</div>
+              <div class="font-medium text-slate-950">hello@developer.io</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 glass-card rounded-xl flex items-center justify-center text-navy-900 bg-white shadow-sm border-slate-100">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"
+                  stroke-width="2"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm text-slate-400">Location</div>
+              <div class="font-medium text-slate-950">San Francisco, CA</div>
+            </div>
+          </div>
         </div>
-
+        <!-- Social Links -->
+        <div class="flex gap-4 mt-12">
+          <a class="w-10 h-10 glass-card rounded-lg flex items-center justify-center text-slate-600 hover:text-emerald-600 transition-colors bg-white shadow-sm border-slate-100"
+            href="#">
+            <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24">
+              <path
+                d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z">
+              </path>
+            </svg>
+          </a>
+          <a class="w-10 h-10 glass-card rounded-lg flex items-center justify-center text-slate-600 hover:text-emerald-600 transition-colors bg-white shadow-sm border-slate-100"
+            href="#">
+            <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"></svg></a>
+        </div>
       </div>
     </div>
-  </footer>
-
-  <script src="Core/script.js"></script>
+  </section>
 </body>
-<script>
-  // Animate skill bars
-  function animateSkillBars() {
-    const skillBars = document.querySelectorAll('.skill-progress');
-    skillBars.forEach((bar, index) => {
-      setTimeout(() => {
-        const width = bar.getAttribute('data-width');
-        bar.style.width = width;
-      }, index * 200);
-    });
-  }
-
-  // Run animation when DOM loads
-  document.addEventListener("DOMContentLoaded", () => {
-    animateSkillBars();
-  });
-</script>
 
 </html>
