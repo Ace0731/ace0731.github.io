@@ -1,706 +1,1098 @@
-<html class="scroll-smooth" lang="en">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Portfolio | Full Stack Developer</title>
-  <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com" rel="preconnect" />
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap"
-    rel="stylesheet" />
-  <!-- Tailwind CSS v3 -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            emerald: {
-              900: '#064e3b',
-              950: '#042f24',
-            },
-            navy: {
-              400: '#3b82f6',
-              900: '#1e3a8a',
-              950: '#172554',
-            },
-            slate: {
-              950: '#0f172a',
-            }
-          },
-          fontFamily: {
-            sans: ['Space Grotesk', 'sans-serif'],
-          },
-          borderRadius: {
-            'xl': '12px',
-          },
-        },
-      },
-    }
-  </script>
-  <!-- BEGIN: Global Styles -->
-  <style data-purpose="custom-layout">
-    body {
-      background-color: #f8fafc;
-      /* Slate-50 */
-      color: #64748b;
-      /* Slate-500 for paragraphs */
-      font-family: 'Space Grotesk', sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anand Kushwaha | Full Stack Developer</title>
+<meta name="description" content="Anand Kushwaha — Full Stack Developer building scalable web and mobile applications.">
+<link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
 
-    h1,
-    h2,
-    h3,
-    h4,
-    .text-slate-950 {
-      color: #0f172a;
-      /* Slate-900 for headings */
-    }
+<!-- Fonts: Poppins for headings, Inter for body text -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-    .glass-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-    }
+<style>
+  /* ============================================
+     1. ROOT VARIABLES — design tokens
+  ============================================ */
+  :root{
+    --bg:#0B1120;
+    --bg-alt:#0d1526;
+    --card:rgba(255,255,255,0.05);
+    --card-border:rgba(255,255,255,0.08);
+    --card-hover:rgba(255,255,255,0.09);
+    --primary:#3B82F6;
+    --primary-dim:#3B82F633;
+    --accent:#22C55E;
+    --text:#FFFFFF;
+    --text-secondary:#94A3B8;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --shadow-soft:0 20px 60px -20px rgba(0,0,0,0.6);
+    --ease:cubic-bezier(.16,.8,.3,1);
+    --nav-h:76px;
+  }
 
-    .gradient-text {
-      background: linear-gradient(to right, #059669, #1e3a8a);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+  *{ margin:0; padding:0; box-sizing:border-box; }
 
-    .gradient-bg-hero {
-      background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent),
-        radial-gradient(circle at bottom left, rgba(30, 58, 138, 0.05), transparent);
-    }
+  html{
+    scroll-behavior:smooth;
+    scroll-padding-top:var(--nav-h);
+  }
 
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #e2e8f0;
-      border-radius: 10px;
+  h1,h2,h3,h4{
+    font-family:'Poppins', sans-serif;
+    letter-spacing:-0.02em;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; }
+  img{ max-width:100%; display:block; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+
+  ::selection{ background:var(--primary); color:#fff; }
+
+  /* Focus visibility for accessibility */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--primary);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  .container{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* ============================================
+     2. ANIMATED GRADIENT BACKGROUND
+  ============================================ */
+  .bg-canvas{
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background:var(--bg);
+    overflow:hidden;
+  }
+
+  .bg-canvas::before,
+  .bg-canvas::after{
+    content:'';
+    position:absolute;
+    width:60vw;
+    height:60vw;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:0.16;
+    animation:drift 22s ease-in-out infinite alternate;
+  }
+
+  .bg-canvas::before{
+    background:var(--primary);
+    top:-20%;
+    left:-10%;
+  }
+
+  .bg-canvas::after{
+    background:var(--accent);
+    bottom:-25%;
+    right:-10%;
+    animation-delay:-11s;
+  }
+
+  @keyframes drift{
+    0%{ transform:translate(0,0) scale(1); }
+    100%{ transform:translate(6%,8%) scale(1.15); }
+  }
+
+  .grain-grid{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:48px 48px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  /* ============================================
+     3. NAVBAR
+  ============================================ */
+  .navbar{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:1000;
+    height:var(--nav-h);
+    display:flex;
+    align-items:center;
+    background:rgba(11,17,32,0.5);
+    backdrop-filter:blur(16px) saturate(140%);
+    -webkit-backdrop-filter:blur(16px) saturate(140%);
+    border-bottom:1px solid transparent;
+    transition:background .4s var(--ease), border-color .4s var(--ease);
+  }
+
+  .navbar.scrolled{
+    background:rgba(11,17,32,0.75);
+    border-bottom-color:var(--card-border);
+  }
+
+  .nav-inner{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .logo{
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:1.15rem;
+    letter-spacing:-0.03em;
+  }
+
+  .logo span{ color:var(--primary); }
+
+  .nav-links{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  .nav-links a{
+    position:relative;
+    padding:8px 16px;
+    font-size:0.9rem;
+    font-weight:500;
+    color:var(--text-secondary);
+    border-radius:999px;
+    transition:color .25s var(--ease), background .25s var(--ease);
+  }
+
+  .nav-links a:hover{ color:var(--text); background:rgba(255,255,255,0.05); }
+
+  .nav-links a.active{
+    color:var(--text);
+    background:rgba(59,130,246,0.12);
+  }
+
+  .nav-toggle{
+    display:none;
+    width:40px; height:40px;
+    align-items:center; justify-content:center;
+    border-radius:10px;
+    background:var(--card);
+    border:1px solid var(--card-border);
+  }
+
+  .nav-toggle span,
+  .nav-toggle span::before,
+  .nav-toggle span::after{
+    content:'';
+    display:block;
+    width:18px; height:2px;
+    background:var(--text);
+    position:relative;
+    transition:transform .3s var(--ease), opacity .3s var(--ease);
+  }
+  .nav-toggle span::before{ position:absolute; top:-6px; }
+  .nav-toggle span::after{ position:absolute; top:6px; }
+
+  .nav-toggle.open span{ background:transparent; }
+  .nav-toggle.open span::before{ top:0; transform:rotate(45deg); }
+  .nav-toggle.open span::after{ top:0; transform:rotate(-45deg); }
+
+  /* ============================================
+     4. SECTION SHELL
+  ============================================ */
+  section{
+    padding:140px 0 40px;
+    position:relative;
+  }
+
+  .section-tag{
+    display:inline-block;
+    font-size:0.78rem;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--primary);
+    margin-bottom:14px;
+  }
+
+  .section-title{
+    font-size:clamp(1.8rem, 3.4vw, 2.6rem);
+    font-weight:700;
+    margin-bottom:16px;
+  }
+
+  .section-sub{
+    color:var(--text-secondary);
+    font-size:1rem;
+    max-width:560px;
+    margin-bottom:56px;
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .8s var(--ease), transform .8s var(--ease);
+  }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+
+  .reveal-stagger > *{
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity .7s var(--ease), transform .7s var(--ease);
+  }
+  .reveal-stagger.in-view > *{ opacity:1; transform:translateY(0); }
+
+  /* ============================================
+     5. HERO
+  ============================================ */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:var(--nav-h);
+  }
+
+  .hero-inner{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:22px;
+  }
+
+  .hero-eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:0.85rem;
+    color:var(--text-secondary);
+    padding:7px 16px;
+    border:1px solid var(--card-border);
+    border-radius:999px;
+    background:var(--card);
+    backdrop-filter:blur(10px);
+  }
+
+  .dot-pulse{
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 0 rgba(34,197,94,0.6);
+    animation:pulse 2s infinite;
+  }
+
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(34,197,94,0.5); }
+    70%{ box-shadow:0 0 0 10px rgba(34,197,94,0); }
+    100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); }
+  }
+
+  .hero-name{
+    font-size:clamp(2.6rem, 7vw, 4.6rem);
+    font-weight:800;
+    line-height:1.05;
+    background:linear-gradient(180deg, #ffffff 30%, #b9c6dd 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .hero-title{
+    font-family:'Poppins', sans-serif;
+    font-size:clamp(1.15rem, 2.4vw, 1.6rem);
+    font-weight:600;
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    min-height:1.6em;
+  }
+
+  .type-cursor{
+    display:inline-block;
+    width:3px;
+    height:1.1em;
+    background:var(--primary);
+    margin-left:4px;
+    animation:blink 0.9s step-end infinite;
+  }
+
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-subtitle{
+    font-size:1.05rem;
+    color:var(--text-secondary);
+    max-width:560px;
+  }
+
+  .hero-actions{
+    display:flex;
+    gap:16px;
+    margin-top:14px;
+    flex-wrap:wrap;
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:14px 26px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:0.95rem;
+    transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease);
+  }
+
+  .btn-primary{
+    background:var(--primary);
+    color:#fff;
+    box-shadow:0 8px 30px -8px rgba(59,130,246,0.55);
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 40px -8px rgba(59,130,246,0.7); }
+
+  .btn-ghost{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    backdrop-filter:blur(10px);
+  }
+  .btn-ghost:hover{ transform:translateY(-2px); background:var(--card-hover); border-color:rgba(255,255,255,0.18); }
+
+  .scroll-hint{
+    position:absolute;
+    bottom:34px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    color:var(--text-secondary);
+    font-size:0.75rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+
+  .scroll-hint .line{
+    width:1px; height:36px;
+    background:linear-gradient(var(--text-secondary), transparent);
+    animation:scrolldown 1.8s ease-in-out infinite;
+  }
+
+  @keyframes scrolldown{
+    0%{ transform:scaleY(0); transform-origin:top; }
+    50%{ transform:scaleY(1); transform-origin:top; }
+    51%{ transform-origin:bottom; }
+    100%{ transform:scaleY(0); transform-origin:bottom; }
+  }
+
+  /* ============================================
+     6. CARD BASE (shared glassmorphism)
+  ============================================ */
+  .glass-card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:var(--radius-md);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    transition:transform .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease), box-shadow .35s var(--ease);
+  }
+
+  .glass-card:hover{
+    transform:translateY(-6px);
+    border-color:rgba(59,130,246,0.35);
+    background:var(--card-hover);
+    box-shadow:var(--shadow-soft);
+  }
+
+  /* ============================================
+     7. ABOUT
+  ============================================ */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1fr 1.3fr;
+    gap:48px;
+    align-items:start;
+  }
+
+  .about-photo{
+    aspect-ratio:1/1;
+    border-radius:var(--radius-lg);
+    background:
+      radial-gradient(circle at 30% 20%, rgba(59,130,246,0.35), transparent 55%),
+      radial-gradient(circle at 75% 80%, rgba(34,197,94,0.28), transparent 55%),
+      var(--card);
+    border:1px solid var(--card-border);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .about-photo .initials{
+    font-family:'Poppins', sans-serif;
+    font-size:5rem;
+    font-weight:700;
+    color:rgba(255,255,255,0.9);
+    letter-spacing:-0.04em;
+  }
+
+  .about-photo::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.05) 50%, transparent 60%);
+  }
+
+  .about-list{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .about-item{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    font-size:1rem;
+    color:#dbe3ee;
+  }
+
+  .about-icon{
+    flex-shrink:0;
+    width:34px; height:34px;
+    border-radius:10px;
+    background:rgba(59,130,246,0.14);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.05rem;
+  }
+
+  /* ============================================
+     8. GRID LAYOUTS (Tech, Build, Focus)
+  ============================================ */
+  .grid{
+    display:grid;
+    gap:18px;
+  }
+
+  .grid-tech{ grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); }
+  .grid-build{ grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-focus{ grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); }
+
+  .tech-card{
+    padding:24px 18px;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+  }
+
+  .tech-icon{
+    font-size:1.6rem;
+    width:52px; height:52px;
+    border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg, rgba(59,130,246,0.16), rgba(34,197,94,0.1));
+  }
+
+  .tech-name{ font-weight:600; font-size:0.92rem; }
+
+  .subsection-heading{
+    font-family:'Poppins', sans-serif;
+    font-size:1.15rem;
+    font-weight:600;
+    margin:44px 0 22px;
+    color:#dbe3ee;
+  }
+
+  .subsection-heading:first-of-type{ margin-top:0; }
+
+  .build-card{
+    padding:32px 28px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .build-emoji{
+    font-size:2rem;
+    width:60px; height:60px;
+    border-radius:16px;
+    background:var(--card);
+    border:1px solid var(--card-border);
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .build-card h3{
+    font-size:1.15rem;
+    font-weight:600;
+  }
+
+  .build-card p{
+    color:var(--text-secondary);
+    font-size:0.94rem;
+  }
+
+  .focus-card{
+    padding:26px 20px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+
+  .focus-glyph{
+    width:42px; height:42px;
+    border-radius:12px;
+    flex-shrink:0;
+    background:rgba(34,197,94,0.14);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--accent);
+    font-weight:700;
+    font-family:'Poppins', sans-serif;
+  }
+
+  .focus-name{ font-weight:600; font-size:0.98rem; }
+
+  /* ============================================
+     9. CONTACT
+  ============================================ */
+  .contact-box{
+    padding:64px 48px;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:26px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.12), transparent 60%),
+      var(--card);
+  }
+
+  .contact-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    justify-content:center;
+  }
+
+  .contact-actions .btn{ font-size:0.9rem; padding:13px 24px; }
+
+  /* ============================================
+     10. FOOTER
+  ============================================ */
+  footer{
+    border-top:1px solid var(--card-border);
+    padding:32px 0;
+    text-align:center;
+    color:var(--text-secondary);
+    font-size:0.85rem;
+  }
+
+  footer strong{ color:var(--text); font-weight:600; }
+
+  /* ============================================
+     11. BACK TO TOP
+  ============================================ */
+  .back-to-top{
+    position:fixed;
+    bottom:28px;
+    right:28px;
+    width:48px; height:48px;
+    border-radius:50%;
+    background:var(--primary);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 10px 30px -8px rgba(59,130,246,0.6);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(12px);
+    transition:opacity .35s var(--ease), transform .35s var(--ease), visibility .35s;
+    z-index:900;
+  }
+
+  .back-to-top.visible{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+
+  .back-to-top:hover{ transform:translateY(-3px); }
+
+  /* ============================================
+     12. RESPONSIVE
+  ============================================ */
+  @media (max-width:860px){
+    .about-grid{ grid-template-columns:1fr; }
+    .about-photo{ max-width:260px; margin:0 auto; }
+  }
+
+  @media (max-width:720px){
+    .nav-links{
+      position:fixed;
+      top:var(--nav-h);
+      left:0; right:0;
+      flex-direction:column;
+      align-items:stretch;
+      background:rgba(11,17,32,0.97);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--card-border);
+      padding:12px;
+      gap:4px;
+      transform:translateY(-140%);
+      opacity:0;
+      transition:transform .4s var(--ease), opacity .3s var(--ease);
     }
-  </style>
-  <!-- END: Global Styles -->
+    .nav-links.open{ transform:translateY(0); opacity:1; }
+    .nav-links a{ padding:14px 16px; text-align:center; }
+    .nav-toggle{ display:flex; }
+    section{ padding:110px 0 20px; }
+    .contact-box{ padding:44px 24px; }
+  }
+
+  @media (max-width:480px){
+    .container{ padding:0 20px; }
+    .hero-actions{ flex-direction:column; width:100%; }
+    .btn{ justify-content:center; width:100%; }
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+</style>
 </head>
+<body>
 
-<body class="custom-scrollbar overflow-x-hidden selection:bg-emerald-500/30">
-  <!-- BEGIN: Navigation -->
-  <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl" data-purpose="floating-navbar">
-    <div class="glass-card rounded-2xl px-6 py-4 flex items-center justify-between shadow-sm">
-      <div class="text-xl font-bold tracking-tighter text-slate-950">
-        <span class="text-emerald-600">DEV</span>ELOPER
-      </div>
-      <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
-        <a class="text-slate-600 hover:text-emerald-600 transition-colors" href="#hero">Home</a>
-        <a class="text-slate-600 hover:text-emerald-600 transition-colors" href="#about">About</a>
-        <a class="text-slate-600 hover:text-emerald-600 transition-colors" href="#projects">Projects</a>
-        <a class="px-5 py-2 bg-emerald-900 text-white border border-emerald-500/30 rounded-xl hover:bg-emerald-800 transition-all"
-          href="#contact">Let's Talk</a>
-      </div>
-      <!-- Mobile Menu Placeholder (Visual only) -->
-      <button class="md:hidden p-2 text-slate-900">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg">
-          <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
+  <!-- Ambient animated background -->
+  <div class="bg-canvas"></div>
+  <div class="grain-grid"></div>
+
+  <!-- ============================================
+       NAVBAR
+  ============================================ -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="#home" class="logo">Anand<span>.dev</span></a>
+
+      <nav>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+          <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+          <li><a href="#stack" class="nav-link" data-section="stack">Tech Stack</a></li>
+          <li><a href="#build" class="nav-link" data-section="build">What I Build</a></li>
+          <li><a href="#focus" class="nav-link" data-section="focus">Focus</a></li>
+          <li><a href="#contact" class="nav-link" data-section="contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+        <span></span>
       </button>
     </div>
-  </nav>
-  <!-- END: Navigation -->
-  <!-- BEGIN: Hero Section -->
-  <section class="min-h-screen flex items-center justify-center pt-20 gradient-bg-hero px-6" id="hero">
-    <div class="max-w-6xl mx-auto text-center">
-      <!-- Animated Badge --><br>
-      <div
-        class="inline-flex items-center px-4 py-2 rounded-full glass-card text-emerald-700 text-sm font-medium mb-8 border border-emerald-500/10 animate-pulse">
-        <span class="relative flex h-2 w-2 mr-3">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        Available for new opportunities
+  </header>
+
+  <!-- ============================================
+       HERO SECTION
+  ============================================ -->
+  <section class="hero" id="home">
+    <div class="container hero-inner">
+      <div class="hero-eyebrow reveal">
+        <span class="dot-pulse"></span>
+        Available for freelance &amp; full-time opportunities
       </div>
-      <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 leading-tight text-slate-950">
-        Full Stack Developer | Building <br />
-        <span class="gradient-text">Scalable Modern</span> Applications
-      </h1>
-      <p class="text-slate-500 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-        Specializing in crafting premium digital experiences through robust backend architectures and sleek, responsive
-        frontend interfaces.
+
+      <h1 class="hero-name reveal">Anand Kushwaha</h1>
+
+      <div class="hero-title reveal">
+        <span id="typedTitle"></span><span class="type-cursor" aria-hidden="true"></span>
+      </div>
+
+      <p class="hero-subtitle reveal">
+        Building scalable web and mobile applications with clean architecture,
+        efficient backends, and modern user experiences.
       </p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a class="w-full sm:w-auto px-8 py-4 bg-emerald-900 hover:bg-emerald-800 text-white font-semibold rounded-xl transition-all shadow-lg shadow-emerald-900/10"
-          href="#projects">
-          View Projects
-        </a>
-        <a class="w-full sm:w-auto px-8 py-4 glass-card hover:bg-white text-slate-950 font-semibold rounded-xl transition-all border border-slate-200"
-          href="#contact">
-          Contact Me
+
+      <div class="hero-actions reveal">
+        <a href="https://github.com/Ace0731" target="_blank" rel="noopener" class="btn btn-primary">
+          View GitHub
         </a>
       </div>
     </div>
+
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <span class="line"></span>
+    </div>
   </section>
-  <!-- END: Hero Section -->
-  <!-- BEGIN: About Section -->
-  <section class="py-24 px-6 bg-white relative overflow-hidden" id="about">
-    <!-- Subtle Background Pattern -->
-    <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
-      style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 40px 40px;"></div>
-    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
-      <div class="relative group">
-        <div
-          class="absolute -inset-4 bg-gradient-to-r from-emerald-500 to-navy-500 rounded-2xl opacity-10 group-hover:opacity-20 transition-opacity blur-xl">
+
+  <!-- ============================================
+       ABOUT SECTION
+  ============================================ -->
+  <section id="about">
+    <div class="container">
+      <span class="section-tag reveal">About Me</span>
+      <h2 class="section-title reveal">Who I am</h2>
+      <p class="section-sub reveal">A quick overview of my background, focus areas, and how I like to build software.</p>
+
+      <div class="about-grid">
+        <div class="about-photo reveal">
+          <span class="initials">AK</span>
         </div>
-        <img alt="Developer"
-          class="relative rounded-2xl object-cover w-full h-[500px] border border-slate-100 shadow-xl"
-          src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/1769882951010.jpg" />
+
+        <div class="about-list reveal-stagger">
+          <div class="about-item">
+            <span class="about-icon">🇮🇳</span>
+            <span>Full Stack Developer from India</span>
+          </div>
+          <div class="about-item">
+            <span class="about-icon">📱</span>
+            <span>Building cross-platform applications using Flutter</span>
+          </div>
+          <div class="about-item">
+            <span class="about-icon">🛠️</span>
+            <span>Developing scalable backend systems with Laravel &amp; Node.js</span>
+          </div>
+          <div class="about-item">
+            <span class="about-icon">🗄️</span>
+            <span>Designing efficient databases with MySQL</span>
+          </div>
+          <div class="about-item">
+            <span class="about-icon">🏗️</span>
+            <span>Interested in Backend Architecture, System Design and Cloud Deployment</span>
+          </div>
+          <div class="about-item">
+            <span class="about-icon">📈</span>
+            <span>Always learning and improving through real-world projects</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-slate-950">Expertise Driven by <br /><span
-            class="text-emerald-600">Passion &amp; Precision</span></h2>
-        <p class="text-slate-500 leading-relaxed mb-6 text-lg">
-          With over 1.5 years of experience in the software industry, I focus on building high-performance applications
-          that solve complex business problems. My approach combines technical excellence with a deep understanding of
-          user experience.
+    </div>
+  </section>
+
+  <!-- ============================================
+       TECH STACK SECTION
+  ============================================ -->
+  <section id="stack">
+    <div class="container">
+      <span class="section-tag reveal">Tech Stack</span>
+      <h2 class="section-title reveal">Tools &amp; technologies I work with</h2>
+      <p class="section-sub reveal">Languages and frameworks I use daily to design, build, and ship software.</p>
+
+      <h3 class="subsection-heading reveal">Languages</h3>
+      <div class="grid grid-tech reveal-stagger" id="languagesGrid"></div>
+
+      <h3 class="subsection-heading reveal">Frameworks &amp; Tools</h3>
+      <div class="grid grid-tech reveal-stagger" id="toolsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       WHAT I BUILD SECTION
+  ============================================ -->
+  <section id="build">
+    <div class="container">
+      <span class="section-tag reveal">What I Build</span>
+      <h2 class="section-title reveal">Systems I specialize in</h2>
+      <p class="section-sub reveal">From mobile apps to backend infrastructure — here's what I enjoy building most.</p>
+
+      <div class="grid grid-build reveal-stagger">
+        <div class="glass-card build-card">
+          <span class="build-emoji">📱</span>
+          <h3>Mobile Applications</h3>
+          <p>Cross-platform apps built with Flutter, shipped to Android and iOS from a single codebase.</p>
+        </div>
+        <div class="glass-card build-card">
+          <span class="build-emoji">🌐</span>
+          <h3>Web Applications</h3>
+          <p>Responsive, performant web platforms built with modern frontend and backend practices.</p>
+        </div>
+        <div class="glass-card build-card">
+          <span class="build-emoji">🔐</span>
+          <h3>REST APIs &amp; Authentication</h3>
+          <p>Secure, well-documented APIs with token-based auth, role management, and rate limiting.</p>
+        </div>
+        <div class="glass-card build-card">
+          <span class="build-emoji">⚡</span>
+          <h3>Real-time Applications</h3>
+          <p>Live features like notifications, chat, and tracking powered by sockets and event-driven design.</p>
+        </div>
+        <div class="glass-card build-card">
+          <span class="build-emoji">🗄️</span>
+          <h3>Database-driven Systems</h3>
+          <p>Normalized, indexed MySQL schemas built for data integrity and query performance at scale.</p>
+        </div>
+        <div class="glass-card build-card">
+          <span class="build-emoji">☁️</span>
+          <h3>Linux Server Deployments</h3>
+          <p>Production deployments on Linux with Nginx, process managers, and CI-friendly workflows.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       CURRENT FOCUS SECTION
+  ============================================ -->
+  <section id="focus">
+    <div class="container">
+      <span class="section-tag reveal">Current Focus</span>
+      <h2 class="section-title reveal">What I'm sharpening right now</h2>
+      <p class="section-sub reveal">The skills and topics currently getting most of my attention.</p>
+
+      <div class="grid grid-focus reveal-stagger" id="focusGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       CONTACT SECTION
+  ============================================ -->
+  <section id="contact">
+    <div class="container">
+      <span class="section-tag reveal">Contact</span>
+      <h2 class="section-title reveal">Let's build something together</h2>
+
+      <div class="glass-card contact-box reveal">
+        <p style="color:var(--text-secondary); max-width:480px;">
+          Open to freelance projects, full-time roles, and interesting collaborations.
+          Reach out through any of the channels below.
         </p>
-        <p class="text-slate-500 leading-relaxed mb-8 text-lg">
-          I thrive in environments that challenge the status quo and require innovative thinking. From microservices to
-          intuitive UI designs, I cover the entire development lifecycle.
-        </p>
-        <div class="grid grid-cols-2 gap-6">
-          <div class="glass-card p-4 rounded-xl border-slate-100 bg-slate-50/50">
-            <div class="text-emerald-600 text-2xl font-bold">5+</div>
-            <div class="text-slate-500 text-sm">Projects Delivered</div>
-          </div>
-          <div class="glass-card p-4 rounded-xl border-slate-100 bg-slate-50/50">
-            <div class="text-navy-900 text-2xl font-bold">100%</div>
-            <div class="text-slate-500 text-sm">Client Satisfaction</div>
-          </div>
+        <div class="contact-actions">
+          <a href="https://github.com/Ace0731" target="_blank" rel="noopener" class="btn btn-primary">GitHub</a>
+          <a href="mailto:anand.0731.k@gmail.com" class="btn btn-ghost">Email</a>
         </div>
       </div>
     </div>
   </section>
-  <!-- END: About Section -->
-  <!-- BEGIN: Tech Stack -->
-  <section class="py-24 px-6">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold mb-4 text-slate-950">The Power House</h2>
-        <p class="text-slate-500">My preferred technologies for building world-class software</p>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
-        <!-- Tech Icon Card -->
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:flutter" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">Flutter</span>
-        </div>
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:react" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">React</span>
-        </div>
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:laravel" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">Laravel</span>
-        </div>
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:php" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">PHP</span>
-        </div>
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:mysql" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">MySQL</span>
-        </div>
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:javascript" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">JavaScript</span>
-        </div>
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:html-5" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">HTML5</span>
-        </div>
-        <div
-          class="glass-card p-6 rounded-xl flex flex-col items-center justify-center hover:border-emerald-500/50 transition-all group border-slate-200">
-          <div class="w-10 h-10 mb-3">
-            <iconify-icon icon="logos:git-icon" width="100%" height="100%"></iconify-icon>
-          </div>
-          <span
-            class="text-xs font-semibold tracking-wider uppercase text-slate-500 group-hover:text-slate-900">Git</span>
-        </div>
-      </div>
+
+  <!-- ============================================
+       FOOTER
+  ============================================ -->
+  <footer>
+    <div class="container">
+      Designed &amp; Developed by <strong>Anand Kushwaha</strong> · © 2026
     </div>
-  </section>
-  <!-- END: Tech Stack -->
-  <!-- BEGIN: Projects Section -->
-  <section class="py-24 px-6 bg-slate-50" id="projects">
-    <div class="max-w-6xl mx-auto">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
-        <div>
-          <h2 class="text-3xl font-bold mb-4 text-slate-950">Featured Projects</h2>
-          <p class="text-slate-500">Selected work that defines my engineering standards.</p>
-        </div>
-        <div class="mt-4 md:mt-0">
-          <a class="text-emerald-600 font-semibold hover:underline flex items-center gap-2" href="#">
-            View All Projects
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-              <path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- InnoTend -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="InnoTend"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/InnoTend.webp" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">InnoTend</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Cross-platform mobile app for employee attendance with
-              Flutter frontend and .NET Web API backend with automatic attendance marking.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Dart</span>
-              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">.NET
-                Web API</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#" onclick="showPopup(event, 'popupModalApp')">
-                <span>View Project</span>
-              </a>
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#">
-                <span>Play Store</span>
-              </a>
-            </div>
-          </div>
-        </article>
+  </footer>
 
-        <!-- KDO Onboard App -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="KDO Onboard"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/KDO_Onboard.webp" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">KDO Onboard App</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Staff onboarding mobile application for Kholo Dukan
-              Online, built with Flutter for seamless workflows and real-time status tracking.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Dart</span>
-              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">.NET
-                Web API</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#" onclick="showPopup(event, 'popupModalApp')">
-                <span>View Project</span>
-              </a>
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="https://play.google.com/store/apps/details?id=com.innovaneers.atomassstaff">
-                <span>Play Store</span>
-              </a>
-            </div>
-          </div>
-        </article>
+  <!-- Back to top button -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
 
-        <!-- Orgomik Meeting App -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="Orgomik"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Orgomik_logo.jpg" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">Orgomik Meeting App</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">A meeting management platform streamline collaborations
-              with real-time scheduling and full control.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Node.js</span>
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#">
-                <span>View Project</span>
-              </a>
-            </div>
-          </div>
-        </article>
+  <script>
+  /* =========================================================
+     PORTFOLIO SCRIPT
+     Handles: typing effect, nav scroll state, active link
+     highlighting, mobile menu, scroll-reveal animations,
+     and back-to-top behavior.
+  ========================================================= */
+  (function(){
+    'use strict';
 
-        <!-- Shree Pipes CRM -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="Shree Pipes"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/company_logo.png" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">Shree Pipes CRM</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Industrial CRM system for manufacturing with full lead
-              tracking and sales pipeline automation.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter
-                (Web)</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">PHP
-                APIs</span>
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#">
-                <span>View Project</span>
-              </a>
-            </div>
-          </div>
-        </article>
+    /* -------------------------------------------
+       1. DATA — content driving the dynamic grids
+    ------------------------------------------- */
+    const languages = [
+      { icon:'🐘', name:'PHP' },
+      { icon:'📜', name:'JavaScript' },
+      { icon:'🎯', name:'Dart' },
+      { icon:'🎼', name:'C#' },
+      { icon:'📄', name:'HTML5' },
+      { icon:'🎨', name:'CSS3' },
+      { icon:'🗄️', name:'MySQL' }
+    ];
 
-        <!-- Tutor Connect -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="Tutor Connect"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Tutor_Connect.webp" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">Tutor Connect Website</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Connecting tutors with students showcasing full
-              conceptual design to deployment solo.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">React.js</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">Node.js</span>
-              <span
-                class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">Firebase</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="https://thesahilsirstutorials.in/" target="_blank">
-                <span>Live Website</span>
-              </a>
-            </div>
-          </div>
-        </article>
+    const tools = [
+      { icon:'🐦', name:'Flutter' },
+      { icon:'🅻', name:'Laravel' },
+      { icon:'🟢', name:'Node.js' },
+      { icon:'🚂', name:'Express.js' },
+      { icon:'🅱️', name:'Bootstrap' },
+      { icon:'🔧', name:'Git' },
+      { icon:'🐙', name:'GitHub' },
+      { icon:'🐧', name:'Linux' },
+      { icon:'🧭', name:'Nginx' },
+      { icon:'📬', name:'Postman' },
+      { icon:'💻', name:'VS Code' },
+      { icon:'🤖', name:'Android Studio' },
+      { icon:'🎮', name:'Unity' }
+    ];
 
-        <!-- KidsCanvas -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="KidsCanvas"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Kidscanvas.png" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">KidsCanvas Website</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Dynamic and responsive school website designed using
-              Laravel & MySQL backend management.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Laravel</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">MySQL</span>
-              <span
-                class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">JavaScript</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#" onclick="showPopup(event, 'popupModalKidsCanvas')">
-                <span>View Project</span>
-              </a>
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="https://www.kidscanvasschool.co.in/" target="_blank">
-                <span>Live</span>
-              </a>
-            </div>
-          </div>
-        </article>
+    const focusAreas = [
+      'Flutter', 'Laravel', 'Node.js', 'MySQL', 'JavaScript', 'Linux', 'System Design'
+    ];
 
-        <!-- Bilty Web Software -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="Bilty Web Software"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Bilty.png" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">Bilty Web Software</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Logistics & Builty Management System that digitizes
-              manual paperwork for transport operators.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Laravel</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">PHP</span>
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
-              <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] rounded-full border border-slate-200">REST
-                APIs</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#">
-                <span>View Project</span>
-              </a>
-            </div>
-          </div>
-        </article>
-
-        <!-- MService -->
-        <article
-          class="glass-card rounded-2xl overflow-hidden group hover:shadow-xl hover:shadow-slate-200 transition-all duration-500 bg-white border-slate-100">
-          <div class="relative h-56 overflow-hidden">
-            <img alt="MService"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              src="https://cdn.jsdelivr.net/gh/Ace0731/portfolio-assets@main/images/Mservice.png" />
-            <div class="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent"></div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-3 text-slate-950">MService</h3>
-            <p class="text-slate-500 text-sm mb-4 line-clamp-2">Full-stack mobile repair platform consisting of Customer
-              and Technician apps with a web-based admin panel.</p>
-            <div class="flex flex-wrap gap-2 mb-6">
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Flutter</span>
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">Laravel</span>
-              <span
-                class="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] rounded-full border border-emerald-100">PHP</span>
-              <span
-                class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] rounded-full border border-blue-100">MySQL</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <a class="text-slate-600 hover:text-emerald-600 transition-colors flex items-center gap-2 text-sm font-medium"
-                href="#">
-                <span>View Project</span>
-              </a>
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-  <!-- END: Projects Section -->
-  <!-- BEGIN: Experience Section -->
-  <section class="py-24 px-6 bg-white">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-bold mb-16 text-center text-slate-950">Professional Timeline</h2>
-      <div
-        class="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-emerald-500/20 before:via-navy-500/20 before:to-transparent">
-        <!-- Timeline Item 1 -->
-        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-          <div
-            class="flex items-center justify-center w-10 h-10 rounded-full border border-emerald-500/30 bg-white text-emerald-600 shadow-sm z-10 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
-            <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20">
-              <path clip-rule="evenodd"
-                d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011-1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"
-                fill-rule="evenodd"></path>
-            </svg>
-          </div>
-          <div
-            class="w-[calc(100%-4rem)] md:w-[45%] p-6 rounded-2xl glass-card border-l-4 border-l-emerald-600 bg-white shadow-sm">
-            <time class="text-emerald-600 text-sm font-bold block mb-1">OCT 2024 — JAN 2026</time>
-            <h4 class="text-xl font-bold text-slate-950">Full Stack Developer</h4>
-            <div class="text-slate-500 text-sm mb-4">Innovaneers Technologies</div>
-            <p class="text-slate-500 text-sm">Promoted to develop core platform features, optimize database performance,
-              and build scalable REST APIs after a successful internship.</p>
-          </div>
+    /* -------------------------------------------
+       2. RENDER GRIDS
+    ------------------------------------------- */
+    function renderTechGrid(containerId, items){
+      const container = document.getElementById(containerId);
+      const html = items.map(item => `
+        <div class="glass-card tech-card">
+          <span class="tech-icon">${item.icon}</span>
+          <span class="tech-name">${item.name}</span>
         </div>
-        <!-- Timeline Item 2 -->
-        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-          <div
-            class="flex items-center justify-center w-10 h-10 rounded-full border border-navy-500/30 bg-white text-navy-900 shadow-sm z-10 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
-            <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 20 20">
-              <path
-                d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z">
-              </path>
-            </svg>
-          </div>
-          <div
-            class="w-[calc(100%-4rem)] md:w-[45%] p-6 rounded-2xl glass-card border-l-4 border-l-navy-900 bg-white shadow-sm">
-            <time class="text-navy-900 text-sm font-bold block mb-1">MAY 2024 — OCT 2024</time>
-            <h4 class="text-xl font-bold text-slate-950">Intern Full Stack Developer</h4>
-            <div class="text-slate-500 text-sm mb-4">Innovaneers Technologies</div>
-            <p class="text-slate-500 text-sm">Created responsive UI components, supported back-end services, and
-              participated in agile sprints during a 6-month specialized internship program.</p>
-          </div>
-        </div>
-      </div>div>
-    </div>
-  </section>
-  <!-- END: Experience Section -->
-  <!-- BEGIN: Services Section -->
-  <section class="py-24 px-6 bg-slate-50">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold mb-4 text-slate-950">Tailored Solutions</h2>
-        <p class="text-slate-500">Everything you need to bring your vision to life.</p>
-      </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div
-          class="glass-card p-8 rounded-2xl hover:bg-emerald-50/50 transition-colors group bg-white border-slate-100">
-          <div
-            class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-              <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke-linecap="round" stroke-linejoin="round"
-                stroke-width="2"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold mb-2 text-slate-950">Web Development</h3>
-          <p class="text-slate-500 text-sm">Dynamic web applications built with PHP & Laravel, featuring responsive UI
-            and secure architecture.</p>
-        </div>
-        <div class="glass-card p-8 rounded-2xl hover:bg-blue-50/50 transition-colors group bg-white border-slate-100">
-          <div
-            class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-navy-900 mb-6 group-hover:scale-110 transition-transform">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-              <path d="M5 12h14M5 12l4-4m-4 4l4 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              </path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold mb-2 text-slate-950">Backend & APIs</h3>
-          <p class="text-slate-500 text-sm">Scalable RESTful API development with Laravel, JWT Authentication, and
-            Eloquent ORM.</p>
-        </div>
-        <div
-          class="glass-card p-8 rounded-2xl hover:bg-emerald-50/50 transition-colors group bg-white border-slate-100">
-          <div
-            class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-6 group-hover:scale-110 transition-transform">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-              <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold mb-2 text-slate-950">Mobile Apps</h3>
-          <p class="text-slate-500 text-sm">Cross-platform mobile apps for iOS and Android using Flutter with
-            GetX/Provider state management.</p>
-        </div>
-        <div class="glass-card p-8 rounded-2xl hover:bg-blue-50/50 transition-colors group bg-white border-slate-100">
-          <div
-            class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-navy-900 mb-6 group-hover:scale-110 transition-transform">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-              <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              </path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold mb-2 text-slate-950">API Integrations</h3>
-          <p class="text-slate-500 text-sm">Seamless integration of Payment Gateways, SMS Services, and Push
-            Notifications.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- END: Services Section -->
-  <!-- BEGIN: Testimonials Section -->
+      `).join('');
+      container.innerHTML = html;
+    }
 
-  <!-- END: Testimonials Section -->
-  <!-- BEGIN: Contact Section -->
-  <section class="py-24 px-6 bg-slate-50" id="contact">
-    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16">
-      <div>
-        <h2 class="text-4xl font-bold mb-6 text-slate-950">Let's build something <br /><span
-            class="text-emerald-600">extraordinary</span> together.</h2>
-        <p class="text-slate-500 text-lg mb-10">
-          Currently open for freelance projects and full-time opportunities. Drop a message or find me on social media.
-        </p>
-        <div class="space-y-6">
-          <div class="flex items-center gap-4">
-            <div
-              class="w-12 h-12 glass-card rounded-xl flex items-center justify-center text-emerald-600 bg-white shadow-sm border-slate-100">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                <path
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm text-slate-400">Email</div>
-              <div class="font-medium text-slate-950">ak9305059300.001@gmail.com</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-4">
-            <div
-              class="w-12 h-12 glass-card rounded-xl flex items-center justify-center text-navy-900 bg-white shadow-sm border-slate-100">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-                <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"
-                  stroke-width="2"></path>
-              </svg>
-            </div>
-            <div>
-              <div class="text-sm text-slate-400">Location</div>
-              <div class="font-medium text-slate-950">Kanpur, Uttar Pradesh, India</div>
-            </div>
-          </div>
+    function renderFocusGrid(){
+      const container = document.getElementById('focusGrid');
+      const html = focusAreas.map((name, i) => `
+        <div class="glass-card focus-card">
+          <span class="focus-glyph">${String(i + 1).padStart(2,'0')}</span>
+          <span class="focus-name">${name}</span>
         </div>
-        <!-- Social Links -->
+      `).join('');
+      container.innerHTML = html;
+    }
 
-      </div>
-    </div>
-  </section>
+    renderTechGrid('languagesGrid', languages);
+    renderTechGrid('toolsGrid', tools);
+    renderFocusGrid();
+
+    /* -------------------------------------------
+       3. TYPING EFFECT — title only
+    ------------------------------------------- */
+    const typedEl = document.getElementById('typedTitle');
+    const fullTitle = 'Full Stack Developer';
+    let typeIndex = 0;
+
+    function typeTitle(){
+      if (typeIndex <= fullTitle.length){
+        typedEl.textContent = fullTitle.slice(0, typeIndex);
+        typeIndex++;
+        setTimeout(typeTitle, 65);
+      }
+    }
+    // Slight delay so it starts after the hero fades in
+    setTimeout(typeTitle, 500);
+
+    /* -------------------------------------------
+       4. NAVBAR — scrolled state + mobile toggle
+    ------------------------------------------- */
+    const navbar = document.getElementById('navbar');
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    function handleNavbarScrollState(){
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    }
+    handleNavbarScrollState();
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open', isOpen);
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // Close mobile menu after a link is tapped
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* -------------------------------------------
+       5. ACTIVE NAV LINK ON SCROLL
+    ------------------------------------------- */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinkEls = document.querySelectorAll('.nav-link');
+
+    function updateActiveLink(){
+      let currentSection = sections[0].id;
+      const scrollPos = window.scrollY + window.innerHeight * 0.3;
+
+      sections.forEach(section => {
+        if (scrollPos >= section.offsetTop){
+          currentSection = section.id;
+        }
+      });
+
+      navLinkEls.forEach(link => {
+        link.classList.toggle('active', link.dataset.section === currentSection);
+      });
+    }
+
+    /* -------------------------------------------
+       6. BACK TO TOP BUTTON
+    ------------------------------------------- */
+    const backToTop = document.getElementById('backToTop');
+
+    function handleBackToTopVisibility(){
+      backToTop.classList.toggle('visible', window.scrollY > 500);
+    }
+
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* -------------------------------------------
+       7. SCROLL EVENTS (throttled via rAF)
+    ------------------------------------------- */
+    let ticking = false;
+    function onScroll(){
+      if (!ticking){
+        window.requestAnimationFrame(() => {
+          handleNavbarScrollState();
+          updateActiveLink();
+          handleBackToTopVisibility();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+
+    /* -------------------------------------------
+       8. SCROLL REVEAL ANIMATIONS
+    ------------------------------------------- */
+    const revealTargets = document.querySelectorAll('.reveal, .reveal-stagger');
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting){
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+    revealTargets.forEach(target => revealObserver.observe(target));
+
+    /* Stagger children delay for .reveal-stagger groups */
+    document.querySelectorAll('.reveal-stagger').forEach(group => {
+      Array.from(group.children).forEach((child, i) => {
+        child.style.transitionDelay = `${i * 70}ms`;
+      });
+    });
+
+  })();
+  </script>
+
 </body>
-
 </html>
